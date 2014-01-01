@@ -6,7 +6,7 @@ layout: default
     	<div class="row-fluid">
     		<article class="home-icon">
 				<a href="/">
-					<i class="icon-home"></i> 
+					<i class="icon-home"></i>
 				</a>
 			</article>
 			<article class="post">
@@ -17,10 +17,10 @@ layout: default
 					<hr>
 				</section>
 				<section style="margin-bottom: 2em;">
-					{% if page.previous %} 
+					{% if page.previous %}
 							<a rel="prev" class="a-hover"href="{{ page.previous.url }}"><i class="icon-arrow-left"></i> {{ page.previous.title }}</a>
 						{% endif %}
-						{% if page.next %} 
+						{% if page.next %}
 							<a rel="next" style="float:right" class="a-hover"href="{{ page.next.url }}">{{ page.next.title }} <i class="icon-arrow-right"></i></a>
 					{% endif %}
 				</section>
