@@ -1866,7 +1866,7 @@ hr {
   font-family: 'Raleway';
   font-style: normal;
   font-weight: 400;
-  src: local("Raleway"), url(http://themes.googleusercontent.com/static/fonts/raleway/v6/IczWvq5y_Cwwv_rBjOtT0w.woff) format("woff"); }
+  src: local("Raleway"), url(/font/raleway.woff) format("woff"); }
 
 .a-hover, .entries h3, .entries a, .home-icon a {
   color: #333333;
@@ -1974,6 +1974,41 @@ hr {
     line-height: 1.9em;
     font-size: 1.15em;
     color: gray; }
+    .post section div.example, .post section div.example-mouse {
+      font: 13.34px "Inconsolata", arial, clean, sans-serif;
+      color: #666;
+      line-height: 1.3em;
+      padding-top: 20px;
+      height: 200px;
+      border: 1px solid #cccccc;
+      background: #efefef;
+      box-sizing: border-box;
+      text-align: center;
+      -webkit-box-sizing: border-box;
+      -moz-box-sizing: border-box; }
+      .post section div.example div.proc-1, .post section div.example-mouse div.proc-1 {
+        color: #ff6666; }
+      .post section div.example div.proc-2, .post section div.example-mouse div.proc-2 {
+        color: #66ff66; }
+      .post section div.example div.proc-3, .post section div.example-mouse div.proc-3 {
+        color: #6666ff; }
+    .post section div.example-mouse {
+      font-size: 72px;
+      line-height: 200px; }
+    .post section div#example-search {
+      font-size: 18px;
+      height: 100px; }
+      .post section div#example-search button#search {
+        background-color: white;
+        border: 1px solid #333333;
+        cursor: pointer;
+        border-radius: 4px;
+        -webkit-border-radius: 4px;
+        -moz-border-radius: 4px; }
+        .post section div#example-search button#search:active {
+          background-color: #ccc; }
+      .post section div#example-search div#example-search-output {
+        margin-top: 15px; }
 
 footer .container {
   color: white;

@@ -52,7 +52,7 @@ hr{
   font-family: 'Raleway';
   font-style: normal;
   font-weight: 400;
-  src: local('Raleway'), url(http://themes.googleusercontent.com/static/fonts/raleway/v6/IczWvq5y_Cwwv_rBjOtT0w.woff) format('woff');
+  src: local('Raleway'), url(/font/raleway.woff) format('woff');
 }
 
 // 1. b Extends
@@ -145,7 +145,6 @@ hr{
     }
 }
 
-
 // 3. a Pagination
 // --------------------------------------------------
 
@@ -218,7 +217,58 @@ hr{
         line-height: 1.9em;
         font-size: 1.15em;
         color: darken($grayLight, 10%);
-    }
+
+        div.example {
+          font: 13.34px 'Inconsolata',arial,clean,sans-serif;
+          color: #666;
+          line-height: 1.3em;
+          padding-top: 20px;
+          height: 200px;
+          border: 1px solid #ccc;
+          background: #efefef;
+          box-sizing: border-box;
+          text-align: center;
+          -webkit-box-sizing: border-box;
+          -moz-box-sizing: border-box;
+
+          div.proc-1 {
+            color: #ff6666;
+          }
+          div.proc-2 {
+            color: #66ff66;
+          }
+          div.proc-3 {
+            color: #6666ff;
+          }
+       }
+
+       div.example-mouse {
+         @extend div.example;
+         font-size: 72px;
+         line-height: 200px;
+       }
+
+       div#example-search {
+         font-size: 18px;
+         height: 100px;
+
+         button#search {
+           background-color: white;
+           border: 1px solid #333;
+           cursor: pointer;
+           border-radius: 4px;
+           -webkit-border-radius: 4px;
+           -moz-border-radius: 4px;
+
+           &:active {
+             background-color: #ccc;
+           }
+         }
+         div#example-search-output {
+           margin-top: 15px;
+         }
+      }
+   }
 }
 
 // 4. Footer
