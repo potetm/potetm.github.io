@@ -13,17 +13,17 @@
     (b/on-value
       #(j/html ($ :div#example-multi-process) %)))
 
-(defn- offset-x [e]
+(defn offset-x [e]
   (or (.-offsetX e)
       (- (.-pageX e)
          (int (:left (j/offset ($ (.-target e))))))))
 
-(defn- offset-y [e]
+(defn offset-y [e]
   (or (.-offsetY e)
       (- (.-pageY e)
          (int (:top (j/offset ($ (.-target e))))))))
 
-(defn- offset-stream [$elem]
+(defn offset-stream [$elem]
   (-> (bjb/mousemoveE $elem)
       (b/map #(vector (offset-x %) (offset-y %)))))
 
@@ -33,7 +33,7 @@
       (b/on-value
         #(j/html $elem %))))
 
-(defn- page-position [$elem [x y]]
+(defn page-position [$elem [x y]]
   (let [offset (j/offset $elem)]
     [(+ x (int (:left offset)))
      (+ y (int (:top offset)))]))
@@ -46,18 +46,17 @@
         #(j/html $elem %))))
 
 (let [$elem ($ :div#example-mouse-keyboard)
-      $mouse ($ :span#emk-mouse $elem)
-      $keyboard ($ :span#emk-keyboard $elem)]
-  (-> (offset-stream $elem)
-      (b/map (partial page-position $elem))
-      (b/map (fn [[x y]] (str x ", " y)))
+      mouse-stream (-> (offset-stream $elem)
+                       (b/map (partial page-position $elem))
+                       (b/map (fn [[x y]] (str x ", " y))))
+      keyboard-stream (-> (bjb/keyupE ($ js/window))
+                          (b/map #(.-keyCode %))
+                          (b/to-property ""))]
+  (-> (b/combine-as-array mouse-stream keyboard-stream)
       (b/on-value
-        #(j/html $mouse %)))
-
-  (-> (bjb/keyupE ($ js/window))
-      (b/map #(.-keyCode %))
-      (b/on-value
-        #(j/html $keyboard %))))
+        (fn [[pos-string keycode]]
+          (j/html ($ :span#emk-mouse $elem) pos-string)
+          (j/html ($ :span#emk-keyboard $elem) keycode)))))
 
 (defn fake-search [kind]
   (fn [query]
