@@ -1,4 +1,4 @@
-@charset "UTF-8";
+@charset "US-ASCII";
 article,
 aside,
 details,
@@ -1985,7 +1985,8 @@ hr {
       box-sizing: border-box;
       text-align: center;
       -webkit-box-sizing: border-box;
-      -moz-box-sizing: border-box; }
+      -moz-box-sizing: border-box;
+      margin-bottom: 6px; }
       .post section div.example div.proc-1, .post section div.example-mouse div.proc-1 {
         color: #ff6666; }
       .post section div.example div.proc-2, .post section div.example-mouse div.proc-2 {

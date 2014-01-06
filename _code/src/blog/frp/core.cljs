@@ -48,7 +48,8 @@
 (let [$elem ($ :div#example-mouse-keyboard)
       mouse-stream (-> (offset-stream $elem)
                        (b/map (partial page-position $elem))
-                       (b/map (fn [[x y]] (str x ", " y))))
+                       (b/map (fn [[x y]] (str x ", " y)))
+                       (b/to-property ""))
       keyboard-stream (-> (bjb/keyupE ($ js/window))
                           (b/map #(.-keyCode %))
                           (b/to-property ""))]

@@ -26179,10 +26179,10 @@ goog.require("yolk.bacon");
 goog.require("yolk.bacon");
 goog.require("jayq.core");
 goog.require("jayq.core");
-yolk.bacon.on_value.call(null, yolk.bacon.map.call(null, yolk.bacon.sliding_window.call(null, yolk.bacon.map.call(null, yolk.bacon.merge_all.call(null, yolk.bacon.interval.call(null, 250, 1), yolk.bacon.interval.call(null, 1E3, 2), yolk.bacon.interval.call(null, 1500, 3)), function(p1__6456_SHARP_) {
-  return[cljs.core.str('\x3cdiv class\x3d"proc-'), cljs.core.str(p1__6456_SHARP_), cljs.core.str('"\x3eProcess '), cljs.core.str(p1__6456_SHARP_), cljs.core.str("\x3c/div\x3e")].join("");
-}), 10), cljs.core.comp.call(null, cljs.core.into_array, cljs.core.reverse)), function(p1__6457_SHARP_) {
-  return jayq.core.html.call(null, jayq.core.$.call(null, new cljs.core.Keyword(null, "div#example-multi-process", "div#example-multi-process", 777000888)), p1__6457_SHARP_);
+yolk.bacon.on_value.call(null, yolk.bacon.map.call(null, yolk.bacon.sliding_window.call(null, yolk.bacon.map.call(null, yolk.bacon.merge_all.call(null, yolk.bacon.interval.call(null, 250, 1), yolk.bacon.interval.call(null, 1E3, 2), yolk.bacon.interval.call(null, 1500, 3)), function(p1__6510_SHARP_) {
+  return[cljs.core.str('\x3cdiv class\x3d"proc-'), cljs.core.str(p1__6510_SHARP_), cljs.core.str('"\x3eProcess '), cljs.core.str(p1__6510_SHARP_), cljs.core.str("\x3c/div\x3e")].join("");
+}), 10), cljs.core.comp.call(null, cljs.core.into_array, cljs.core.reverse)), function(p1__6511_SHARP_) {
+  return jayq.core.html.call(null, jayq.core.$.call(null, new cljs.core.Keyword(null, "div#example-multi-process", "div#example-multi-process", 777000888)), p1__6511_SHARP_);
 });
 blog.frp.offset_x = function offset_x(e) {
   var or__3408__auto__ = e.offsetX;
@@ -26201,55 +26201,55 @@ blog.frp.offset_y = function offset_y(e) {
   }
 };
 blog.frp.offset_stream = function offset_stream($elem) {
-  return yolk.bacon.map.call(null, yolk.jquery.mousemoveE.call(null, $elem), function(p1__6458_SHARP_) {
-    return new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [blog.frp.offset_x.call(null, p1__6458_SHARP_), blog.frp.offset_y.call(null, p1__6458_SHARP_)], null);
+  return yolk.bacon.map.call(null, yolk.jquery.mousemoveE.call(null, $elem), function(p1__6512_SHARP_) {
+    return new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [blog.frp.offset_x.call(null, p1__6512_SHARP_), blog.frp.offset_y.call(null, p1__6512_SHARP_)], null);
   });
 };
-var $elem_6462 = jayq.core.$.call(null, new cljs.core.Keyword(null, "div#example-mouse-element", "div#example-mouse-element", 2787857329));
-yolk.bacon.on_value.call(null, yolk.bacon.map.call(null, blog.frp.offset_stream.call(null, $elem_6462), function(p__6460) {
-  var vec__6461 = p__6460;
-  var x = cljs.core.nth.call(null, vec__6461, 0, null);
-  var y = cljs.core.nth.call(null, vec__6461, 1, null);
+var $elem_6516 = jayq.core.$.call(null, new cljs.core.Keyword(null, "div#example-mouse-element", "div#example-mouse-element", 2787857329));
+yolk.bacon.on_value.call(null, yolk.bacon.map.call(null, blog.frp.offset_stream.call(null, $elem_6516), function(p__6514) {
+  var vec__6515 = p__6514;
+  var x = cljs.core.nth.call(null, vec__6515, 0, null);
+  var y = cljs.core.nth.call(null, vec__6515, 1, null);
   return[cljs.core.str(x), cljs.core.str(", "), cljs.core.str(y)].join("");
-}), function(p1__6459_SHARP_) {
-  return jayq.core.html.call(null, $elem_6462, p1__6459_SHARP_);
+}), function(p1__6513_SHARP_) {
+  return jayq.core.html.call(null, $elem_6516, p1__6513_SHARP_);
 });
-blog.frp.page_position = function page_position($elem, p__6463) {
-  var vec__6465 = p__6463;
-  var x = cljs.core.nth.call(null, vec__6465, 0, null);
-  var y = cljs.core.nth.call(null, vec__6465, 1, null);
+blog.frp.page_position = function page_position($elem, p__6517) {
+  var vec__6519 = p__6517;
+  var x = cljs.core.nth.call(null, vec__6519, 0, null);
+  var y = cljs.core.nth.call(null, vec__6519, 1, null);
   var offset = jayq.core.offset.call(null, $elem);
   return new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [x + ((new cljs.core.Keyword(null, "left", "left", 1017222009)).cljs$core$IFn$_invoke$arity$1(offset) | 0), y + ((new cljs.core.Keyword(null, "top", "top", 1014019271)).cljs$core$IFn$_invoke$arity$1(offset) | 0)], null);
 };
-var $elem_6469 = jayq.core.$.call(null, new cljs.core.Keyword(null, "div#example-mouse-page", "div#example-mouse-page", 3440661406));
-yolk.bacon.on_value.call(null, yolk.bacon.map.call(null, yolk.bacon.map.call(null, blog.frp.offset_stream.call(null, $elem_6469), cljs.core.partial.call(null, blog.frp.page_position, $elem_6469)), function(p__6467) {
-  var vec__6468 = p__6467;
-  var x = cljs.core.nth.call(null, vec__6468, 0, null);
-  var y = cljs.core.nth.call(null, vec__6468, 1, null);
+var $elem_6523 = jayq.core.$.call(null, new cljs.core.Keyword(null, "div#example-mouse-page", "div#example-mouse-page", 3440661406));
+yolk.bacon.on_value.call(null, yolk.bacon.map.call(null, yolk.bacon.map.call(null, blog.frp.offset_stream.call(null, $elem_6523), cljs.core.partial.call(null, blog.frp.page_position, $elem_6523)), function(p__6521) {
+  var vec__6522 = p__6521;
+  var x = cljs.core.nth.call(null, vec__6522, 0, null);
+  var y = cljs.core.nth.call(null, vec__6522, 1, null);
   return[cljs.core.str(x), cljs.core.str(", "), cljs.core.str(y)].join("");
-}), function(p1__6466_SHARP_) {
-  return jayq.core.html.call(null, $elem_6469, p1__6466_SHARP_);
+}), function(p1__6520_SHARP_) {
+  return jayq.core.html.call(null, $elem_6523, p1__6520_SHARP_);
 });
-var $elem_6475 = jayq.core.$.call(null, new cljs.core.Keyword(null, "div#example-mouse-keyboard", "div#example-mouse-keyboard", 683953782));
-var mouse_stream_6476 = yolk.bacon.map.call(null, yolk.bacon.map.call(null, blog.frp.offset_stream.call(null, $elem_6475), cljs.core.partial.call(null, blog.frp.page_position, $elem_6475)), function($elem_6475) {
-  return function(p__6471) {
-    var vec__6472 = p__6471;
-    var x = cljs.core.nth.call(null, vec__6472, 0, null);
-    var y = cljs.core.nth.call(null, vec__6472, 1, null);
+var $elem_6529 = jayq.core.$.call(null, new cljs.core.Keyword(null, "div#example-mouse-keyboard", "div#example-mouse-keyboard", 683953782));
+var mouse_stream_6530 = yolk.bacon.to_property.call(null, yolk.bacon.map.call(null, yolk.bacon.map.call(null, blog.frp.offset_stream.call(null, $elem_6529), cljs.core.partial.call(null, blog.frp.page_position, $elem_6529)), function($elem_6529) {
+  return function(p__6525) {
+    var vec__6526 = p__6525;
+    var x = cljs.core.nth.call(null, vec__6526, 0, null);
+    var y = cljs.core.nth.call(null, vec__6526, 1, null);
     return[cljs.core.str(x), cljs.core.str(", "), cljs.core.str(y)].join("");
   };
-}($elem_6475));
-var keyboard_stream_6477 = yolk.bacon.to_property.call(null, yolk.bacon.map.call(null, yolk.jquery.keyupE.call(null, jayq.core.$.call(null, window)), function($elem_6475, mouse_stream_6476) {
-  return function(p1__6470_SHARP_) {
-    return p1__6470_SHARP_.keyCode;
+}($elem_6529)), "");
+var keyboard_stream_6531 = yolk.bacon.to_property.call(null, yolk.bacon.map.call(null, yolk.jquery.keyupE.call(null, jayq.core.$.call(null, window)), function($elem_6529, mouse_stream_6530) {
+  return function(p1__6524_SHARP_) {
+    return p1__6524_SHARP_.keyCode;
   };
-}($elem_6475, mouse_stream_6476)), "");
-yolk.bacon.on_value.call(null, yolk.bacon.combine_as_array.call(null, mouse_stream_6476, keyboard_stream_6477), function(p__6473) {
-  var vec__6474 = p__6473;
-  var pos_string = cljs.core.nth.call(null, vec__6474, 0, null);
-  var keycode = cljs.core.nth.call(null, vec__6474, 1, null);
-  jayq.core.html.call(null, jayq.core.$.call(null, new cljs.core.Keyword(null, "span#emk-mouse", "span#emk-mouse", 2149271700), $elem_6475), pos_string);
-  return jayq.core.html.call(null, jayq.core.$.call(null, new cljs.core.Keyword(null, "span#emk-keyboard", "span#emk-keyboard", 2501845436), $elem_6475), keycode);
+}($elem_6529, mouse_stream_6530)), "");
+yolk.bacon.on_value.call(null, yolk.bacon.combine_as_array.call(null, mouse_stream_6530, keyboard_stream_6531), function(p__6527) {
+  var vec__6528 = p__6527;
+  var pos_string = cljs.core.nth.call(null, vec__6528, 0, null);
+  var keycode = cljs.core.nth.call(null, vec__6528, 1, null);
+  jayq.core.html.call(null, jayq.core.$.call(null, new cljs.core.Keyword(null, "span#emk-mouse", "span#emk-mouse", 2149271700), $elem_6529), pos_string);
+  return jayq.core.html.call(null, jayq.core.$.call(null, new cljs.core.Keyword(null, "span#emk-keyboard", "span#emk-keyboard", 2501845436), $elem_6529), keycode);
 });
 blog.frp.fake_search = function fake_search(kind) {
   return function(query) {
@@ -26266,49 +26266,49 @@ blog.frp.fastest = function() {
   var fastest__delegate = function(query, replicas) {
     var bus = yolk.bacon.bus.call(null);
     var timeout = yolk.bacon.later.call(null, 80, "null");
-    var seq__6482_6486 = cljs.core.seq.call(null, replicas);
-    var chunk__6483_6487 = null;
-    var count__6484_6488 = 0;
-    var i__6485_6489 = 0;
+    var seq__6536_6540 = cljs.core.seq.call(null, replicas);
+    var chunk__6537_6541 = null;
+    var count__6538_6542 = 0;
+    var i__6539_6543 = 0;
     while (true) {
-      if (i__6485_6489 < count__6484_6488) {
-        var replica_6490 = cljs.core._nth.call(null, chunk__6483_6487, i__6485_6489);
-        yolk.bacon.plug.call(null, bus, replica_6490.call(null, query));
-        var G__6491 = seq__6482_6486;
-        var G__6492 = chunk__6483_6487;
-        var G__6493 = count__6484_6488;
-        var G__6494 = i__6485_6489 + 1;
-        seq__6482_6486 = G__6491;
-        chunk__6483_6487 = G__6492;
-        count__6484_6488 = G__6493;
-        i__6485_6489 = G__6494;
+      if (i__6539_6543 < count__6538_6542) {
+        var replica_6544 = cljs.core._nth.call(null, chunk__6537_6541, i__6539_6543);
+        yolk.bacon.plug.call(null, bus, replica_6544.call(null, query));
+        var G__6545 = seq__6536_6540;
+        var G__6546 = chunk__6537_6541;
+        var G__6547 = count__6538_6542;
+        var G__6548 = i__6539_6543 + 1;
+        seq__6536_6540 = G__6545;
+        chunk__6537_6541 = G__6546;
+        count__6538_6542 = G__6547;
+        i__6539_6543 = G__6548;
         continue;
       } else {
-        var temp__4092__auto___6495 = cljs.core.seq.call(null, seq__6482_6486);
-        if (temp__4092__auto___6495) {
-          var seq__6482_6496__$1 = temp__4092__auto___6495;
-          if (cljs.core.chunked_seq_QMARK_.call(null, seq__6482_6496__$1)) {
-            var c__4150__auto___6497 = cljs.core.chunk_first.call(null, seq__6482_6496__$1);
-            var G__6498 = cljs.core.chunk_rest.call(null, seq__6482_6496__$1);
-            var G__6499 = c__4150__auto___6497;
-            var G__6500 = cljs.core.count.call(null, c__4150__auto___6497);
-            var G__6501 = 0;
-            seq__6482_6486 = G__6498;
-            chunk__6483_6487 = G__6499;
-            count__6484_6488 = G__6500;
-            i__6485_6489 = G__6501;
+        var temp__4092__auto___6549 = cljs.core.seq.call(null, seq__6536_6540);
+        if (temp__4092__auto___6549) {
+          var seq__6536_6550__$1 = temp__4092__auto___6549;
+          if (cljs.core.chunked_seq_QMARK_.call(null, seq__6536_6550__$1)) {
+            var c__4150__auto___6551 = cljs.core.chunk_first.call(null, seq__6536_6550__$1);
+            var G__6552 = cljs.core.chunk_rest.call(null, seq__6536_6550__$1);
+            var G__6553 = c__4150__auto___6551;
+            var G__6554 = cljs.core.count.call(null, c__4150__auto___6551);
+            var G__6555 = 0;
+            seq__6536_6540 = G__6552;
+            chunk__6537_6541 = G__6553;
+            count__6538_6542 = G__6554;
+            i__6539_6543 = G__6555;
             continue;
           } else {
-            var replica_6502 = cljs.core.first.call(null, seq__6482_6496__$1);
-            yolk.bacon.plug.call(null, bus, replica_6502.call(null, query));
-            var G__6503 = cljs.core.next.call(null, seq__6482_6496__$1);
-            var G__6504 = null;
-            var G__6505 = 0;
-            var G__6506 = 0;
-            seq__6482_6486 = G__6503;
-            chunk__6483_6487 = G__6504;
-            count__6484_6488 = G__6505;
-            i__6485_6489 = G__6506;
+            var replica_6556 = cljs.core.first.call(null, seq__6536_6550__$1);
+            yolk.bacon.plug.call(null, bus, replica_6556.call(null, query));
+            var G__6557 = cljs.core.next.call(null, seq__6536_6550__$1);
+            var G__6558 = null;
+            var G__6559 = 0;
+            var G__6560 = 0;
+            seq__6536_6540 = G__6557;
+            chunk__6537_6541 = G__6558;
+            count__6538_6542 = G__6559;
+            i__6539_6543 = G__6560;
             continue;
           }
         } else {
@@ -26326,9 +26326,9 @@ blog.frp.fastest = function() {
     return fastest__delegate.call(this, query, replicas);
   };
   fastest.cljs$lang$maxFixedArity = 1;
-  fastest.cljs$lang$applyTo = function(arglist__6507) {
-    var query = cljs.core.first(arglist__6507);
-    var replicas = cljs.core.rest(arglist__6507);
+  fastest.cljs$lang$applyTo = function(arglist__6561) {
+    var query = cljs.core.first(arglist__6561);
+    var replicas = cljs.core.rest(arglist__6561);
     return fastest__delegate(query, replicas);
   };
   fastest.cljs$core$IFn$_invoke$arity$variadic = fastest__delegate;
@@ -26337,10 +26337,10 @@ blog.frp.fastest = function() {
 blog.frp.google = function google(query) {
   return yolk.bacon.combine_as_array.call(null, blog.frp.fastest.call(null, query, blog.frp.web_1, blog.frp.web_2), blog.frp.fastest.call(null, query, blog.frp.image_1, blog.frp.image_2), blog.frp.fastest.call(null, query, blog.frp.video_1, blog.frp.video_2));
 };
-yolk.bacon.on_value.call(null, yolk.bacon.flat_map_latest.call(null, yolk.bacon.do_action.call(null, yolk.jquery.clickE.call(null, jayq.core.$.call(null, new cljs.core.Keyword(null, "button#search", "button#search", 697446283))), function(p1__6508_SHARP_) {
-  return jayq.core.prevent.call(null, p1__6508_SHARP_);
+yolk.bacon.on_value.call(null, yolk.bacon.flat_map_latest.call(null, yolk.bacon.do_action.call(null, yolk.jquery.clickE.call(null, jayq.core.$.call(null, new cljs.core.Keyword(null, "button#search", "button#search", 697446283))), function(p1__6562_SHARP_) {
+  return jayq.core.prevent.call(null, p1__6562_SHARP_);
 }), function() {
   return blog.frp.google.call(null, "clojure");
-}), function(p1__6509_SHARP_) {
-  return jayq.core.text.call(null, jayq.core.$.call(null, new cljs.core.Keyword(null, "div#example-search-output", "div#example-search-output", 2519235235)), p1__6509_SHARP_);
+}), function(p1__6563_SHARP_) {
+  return jayq.core.text.call(null, jayq.core.$.call(null, new cljs.core.Keyword(null, "div#example-search-output", "div#example-search-output", 2519235235)), p1__6563_SHARP_);
 });
