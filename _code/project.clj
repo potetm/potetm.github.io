@@ -13,4 +13,12 @@
                 :source-paths ["src/blog/frp"]
                 :compiler {:optimizations :whitespace
                            :pretty-print true
-                           :output-to "../js/frp.js"}}]})
+                           :output-to "../js/frp.js"}}
+               {:id "frp"
+                :source-paths ["src/blog/frp"]
+                :compiler {:optimizations :advanced
+                           :pretty-print false
+                           :output-to "../js/frp.js"
+                           :externs ["externs/bacon.js"
+                                     "externs/bacon-jquery.js"
+                                     "externs/jquery-1.8.js"]}}]})

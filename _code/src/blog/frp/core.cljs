@@ -25,7 +25,7 @@
 
 (defn offset-stream [$elem]
   (-> (bjb/mousemoveE $elem)
-      (b/map #(vector (offset-x %) (offset-y %)))))
+      (b/map (juxt offset-x offset-y))))
 
 (let [$elem ($ :div#example-mouse-element)]
   (-> (offset-stream $elem)
