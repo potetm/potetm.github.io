@@ -12,11 +12,7 @@ title: "Responsive Design"
 </div>
 <div id="ul-highlight-select" class="example">
    <ul id="ul-highlight-select-list">
-      <li>Gravity's Rainbow</li>
-      <li>Swann's Way</li>
-      <li>Absalom, Absalom</li>
-      <li>Moby Dick</li>
-   </ul>
+  </ul>
 </div>
 <script type="text/javascript" src="/js/jquery.min.js"></script>
 <script type="text/javascript" src="/js/bacon.js"></script>

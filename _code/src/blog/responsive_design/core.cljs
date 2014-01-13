@@ -1,5 +1,6 @@
 (ns blog.responsive-design.core
-  (:require [clojure.string :as str]
+  (:require [blog.responsive-design.template :as t]
+            [clojure.string :as str]
             [jayq.core :refer [$] :as j]
             [yolk.bacon :as b]
             [yolk.jquery :as bjb]))
@@ -44,7 +45,7 @@
 
 (defn filter-keywords [obs & keys]
   (let [keys (set keys)]
-    (b/filter obs #(not (nil? (keys %))))))
+    (b/filter obs (comp not nil? keys))))
 
 (defn update-model! [model events event-key update-key next-fn]
   (let [events (filter-keywords events event-key)]
@@ -66,16 +67,26 @@
 
   (update-model! model events :select :selected
                  (fn [{:keys [highlighted]}]
-                   highlighted)))
+                   highlighted))
+
+  (let [events (b/filter events number?)]
+    (-> events
+        b/skip-duplicates
+        (b/map (b/combine-as-array model events))
+        ->clj
+        (b/map
+          (fn [[m e]] (clj->js (assoc m :highlighted e))))
+        (->> (bjb/add-source model)))))
 
 (defn menu [items events render]
   (let [model (init-model items)]
     (init-events! model events)
 
     (-> model
+        b/log
         ->clj
         (b/on-value
-          (fn [{:keys [items highlighted selected] :as test}]
+          (fn [{:keys [items highlighted selected]}]
             (render items highlighted selected))))))
 
 (let [$elem ($ :pre#array-highlight-list)]
@@ -94,3 +105,30 @@
              items)
            (str/join "\n")
            (j/text $elem)))))
+
+(defn hoverstream [$ul]
+  (-> $ul
+      bjb/mouseoverE
+      (b/map #($ (.-target %)))
+      (b/filter #(j/is % "li"))
+      (b/map #(.index %))))
+
+(defn hover-events [$ul]
+  (-> $ul
+      bjb/clickE
+      (b/map (constantly :select))
+      b/log
+      (b/merge-all (hoverstream $ul) (key-events $ul))))
+
+(let [$elem ($ :ul#ul-highlight-select-list)]
+  (menu
+    ["Gravity's Rainbow"
+     "Swann's Way"
+     "Absalom, Absalom"
+     "Moby Dick"]
+    (hover-events $elem)
+    (fn [items highlighted selected]
+      (j/html $elem "")
+      (doseq [[item i] (map vector items (iterate inc 0))
+              :let [$item ($ (t/li item (= i highlighted) (= i selected)))]]
+        (j/append $elem $item)))))
