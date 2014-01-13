@@ -46,25 +46,33 @@
   (let [keys (set keys)]
     (b/filter obs #(not (nil? (keys %))))))
 
-(defn init-events! [model events]
-  (let [next (filter-keywords events :next)]
-    (-> (b/map next model)
+(defn update-model! [model events event-key update-key next-fn]
+  (let [events (filter-keywords events event-key)]
+    (-> (b/map events model)
         ->clj
         (b/map
-          (fn [{:keys [items highlighted] :as m}]
-            (let [next (if (or (< highlighted 0)
-                               (= (count items) (inc highlighted)))
-                         0
-                         (inc highlighted))]
-              (clj->js (assoc m :highlighted next)))))
+          (fn [{:keys [items highlighted selected] :as m}]
+            (clj->js (assoc m update-key (next-fn m)))))
         (->> (bjb/add-source model)))))
+
+(defn init-events! [model events]
+  (update-model! model events :next :highlighted
+                 (fn [{:keys [items highlighted]}]
+                   (mod (inc highlighted) (count items))))
+
+  (update-model! model events :prev :highlighted
+                 (fn [{:keys [items highlighted]}]
+                   (mod (dec highlighted) (count items))))
+
+  (update-model! model events :select :selected
+                 (fn [{:keys [highlighted]}]
+                   highlighted)))
 
 (defn menu [items events render]
   (let [model (init-model items)]
     (init-events! model events)
 
     (-> model
-        b/log
         ->clj
         (b/on-value
           (fn [{:keys [items highlighted selected] :as test}]

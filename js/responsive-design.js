@@ -27668,8 +27668,8 @@ blog.responsive_design.core.UP_ARROW = 38;
 blog.responsive_design.core.DOWN_ARROW = 40;
 blog.responsive_design.core.ESC = 27;
 blog.responsive_design.core.__GT_clj = function __GT_clj(obs) {
-  return yolk.bacon.map.call(null, obs, function(p1__7383_SHARP_) {
-    return cljs.core.js__GT_clj.call(null, p1__7383_SHARP_, new cljs.core.Keyword(null, "keywordize-keys", "keywordize-keys", 4191781672), true);
+  return yolk.bacon.map.call(null, obs, function(p1__7854_SHARP_) {
+    return cljs.core.js__GT_clj.call(null, p1__7854_SHARP_, new cljs.core.Keyword(null, "keywordize-keys", "keywordize-keys", 4191781672), true);
   });
 };
 blog.responsive_design.core.KEYS = cljs.core.PersistentHashSet.fromArray([blog.responsive_design.core.TAB, blog.responsive_design.core.UP_ARROW, blog.responsive_design.core.DOWN_ARROW, blog.responsive_design.core.ESC, blog.responsive_design.core.ENTER], true);
@@ -27680,10 +27680,10 @@ blog.responsive_design.core.key_events = function key_events($elem) {
   var mouseout = yolk.bacon.map.call(null, yolk.jquery.mouseleaveE.call(null, $elem), false);
   var has_focus_QMARK_ = yolk.jquery.model.call(null, false);
   yolk.jquery.add_source.call(null, has_focus_QMARK_, yolk.bacon.merge.call(null, mousein, mouseout));
-  return yolk.bacon.map.call(null, yolk.bacon.filter.call(null, yolk.bacon.map.call(null, yolk.bacon.do_action.call(null, yolk.bacon.filter.call(null, yolk.jquery.keydownE.call(null, jayq.core.$.call(null, document)), has_focus_QMARK_), jayq.core.prevent), function(p1__7384_SHARP_) {
-    return p1__7384_SHARP_.keyCode;
-  }), cljs.core.comp.call(null, cljs.core.not, cljs.core.nil_QMARK_, blog.responsive_design.core.KEYS)), function(p1__7385_SHARP_) {
-    return blog.responsive_design.core.keycode__GT_action.call(null, p1__7385_SHARP_);
+  return yolk.bacon.map.call(null, yolk.bacon.filter.call(null, yolk.bacon.map.call(null, yolk.bacon.do_action.call(null, yolk.bacon.filter.call(null, yolk.jquery.keydownE.call(null, jayq.core.$.call(null, document)), has_focus_QMARK_), jayq.core.prevent), function(p1__7855_SHARP_) {
+    return p1__7855_SHARP_.keyCode;
+  }), cljs.core.comp.call(null, cljs.core.not, cljs.core.nil_QMARK_, blog.responsive_design.core.KEYS)), function(p1__7856_SHARP_) {
+    return blog.responsive_design.core.keycode__GT_action.call(null, p1__7856_SHARP_);
   });
 };
 blog.responsive_design.core.init_model = function init_model(items) {
@@ -27692,8 +27692,8 @@ blog.responsive_design.core.init_model = function init_model(items) {
 blog.responsive_design.core.filter_keywords = function() {
   var filter_keywords__delegate = function(obs, keys) {
     var keys__$1 = cljs.core.set.call(null, keys);
-    return yolk.bacon.filter.call(null, obs, function(p1__7386_SHARP_) {
-      return!(keys__$1.call(null, p1__7386_SHARP_) == null);
+    return yolk.bacon.filter.call(null, obs, function(p1__7857_SHARP_) {
+      return!(keys__$1.call(null, p1__7857_SHARP_) == null);
     });
   };
   var filter_keywords = function(obs, var_args) {
@@ -27704,42 +27704,64 @@ blog.responsive_design.core.filter_keywords = function() {
     return filter_keywords__delegate.call(this, obs, keys);
   };
   filter_keywords.cljs$lang$maxFixedArity = 1;
-  filter_keywords.cljs$lang$applyTo = function(arglist__7387) {
-    var obs = cljs.core.first(arglist__7387);
-    var keys = cljs.core.rest(arglist__7387);
+  filter_keywords.cljs$lang$applyTo = function(arglist__7858) {
+    var obs = cljs.core.first(arglist__7858);
+    var keys = cljs.core.rest(arglist__7858);
     return filter_keywords__delegate(obs, keys);
   };
   filter_keywords.cljs$core$IFn$_invoke$arity$variadic = filter_keywords__delegate;
   return filter_keywords;
 }();
-blog.responsive_design.core.init_events_BANG_ = function init_events_BANG_(model, events) {
-  var next = blog.responsive_design.core.filter_keywords.call(null, events, new cljs.core.Keyword(null, "next", "next", 1017282149));
-  return yolk.jquery.add_source.call(null, model, yolk.bacon.map.call(null, blog.responsive_design.core.__GT_clj.call(null, yolk.bacon.map.call(null, next, model)), function(p__7390) {
-    var map__7391 = p__7390;
-    var map__7391__$1 = cljs.core.seq_QMARK_.call(null, map__7391) ? cljs.core.apply.call(null, cljs.core.hash_map, map__7391) : map__7391;
-    var m = map__7391__$1;
-    var highlighted = cljs.core.get.call(null, map__7391__$1, new cljs.core.Keyword(null, "highlighted", "highlighted", 3500421061));
-    var items = cljs.core.get.call(null, map__7391__$1, new cljs.core.Keyword(null, "items", "items", 1114430258));
-    var next__$1 = highlighted < 0 || cljs.core._EQ_.call(null, cljs.core.count.call(null, items), highlighted + 1) ? 0 : highlighted + 1;
-    return cljs.core.clj__GT_js.call(null, cljs.core.assoc.call(null, m, new cljs.core.Keyword(null, "highlighted", "highlighted", 3500421061), next__$1));
+blog.responsive_design.core.update_model_BANG_ = function update_model_BANG_(model, events, event_key, update_key, next_fn) {
+  var events__$1 = blog.responsive_design.core.filter_keywords.call(null, events, event_key);
+  return yolk.jquery.add_source.call(null, model, yolk.bacon.map.call(null, blog.responsive_design.core.__GT_clj.call(null, yolk.bacon.map.call(null, events__$1, model)), function(p__7861) {
+    var map__7862 = p__7861;
+    var map__7862__$1 = cljs.core.seq_QMARK_.call(null, map__7862) ? cljs.core.apply.call(null, cljs.core.hash_map, map__7862) : map__7862;
+    var m = map__7862__$1;
+    var selected = cljs.core.get.call(null, map__7862__$1, new cljs.core.Keyword(null, "selected", "selected", 2205476365));
+    var highlighted = cljs.core.get.call(null, map__7862__$1, new cljs.core.Keyword(null, "highlighted", "highlighted", 3500421061));
+    var items = cljs.core.get.call(null, map__7862__$1, new cljs.core.Keyword(null, "items", "items", 1114430258));
+    return cljs.core.clj__GT_js.call(null, cljs.core.assoc.call(null, m, update_key, next_fn.call(null, m)));
   }));
+};
+blog.responsive_design.core.init_events_BANG_ = function init_events_BANG_(model, events) {
+  blog.responsive_design.core.update_model_BANG_.call(null, model, events, new cljs.core.Keyword(null, "next", "next", 1017282149), new cljs.core.Keyword(null, "highlighted", "highlighted", 3500421061), function(p__7869) {
+    var map__7870 = p__7869;
+    var map__7870__$1 = cljs.core.seq_QMARK_.call(null, map__7870) ? cljs.core.apply.call(null, cljs.core.hash_map, map__7870) : map__7870;
+    var highlighted = cljs.core.get.call(null, map__7870__$1, new cljs.core.Keyword(null, "highlighted", "highlighted", 3500421061));
+    var items = cljs.core.get.call(null, map__7870__$1, new cljs.core.Keyword(null, "items", "items", 1114430258));
+    return cljs.core.mod.call(null, highlighted + 1, cljs.core.count.call(null, items));
+  });
+  blog.responsive_design.core.update_model_BANG_.call(null, model, events, new cljs.core.Keyword(null, "prev", "prev", 1017353637), new cljs.core.Keyword(null, "highlighted", "highlighted", 3500421061), function(p__7871) {
+    var map__7872 = p__7871;
+    var map__7872__$1 = cljs.core.seq_QMARK_.call(null, map__7872) ? cljs.core.apply.call(null, cljs.core.hash_map, map__7872) : map__7872;
+    var highlighted = cljs.core.get.call(null, map__7872__$1, new cljs.core.Keyword(null, "highlighted", "highlighted", 3500421061));
+    var items = cljs.core.get.call(null, map__7872__$1, new cljs.core.Keyword(null, "items", "items", 1114430258));
+    return cljs.core.mod.call(null, highlighted - 1, cljs.core.count.call(null, items));
+  });
+  return blog.responsive_design.core.update_model_BANG_.call(null, model, events, new cljs.core.Keyword(null, "select", "select", 4402849902), new cljs.core.Keyword(null, "selected", "selected", 2205476365), function(p__7873) {
+    var map__7874 = p__7873;
+    var map__7874__$1 = cljs.core.seq_QMARK_.call(null, map__7874) ? cljs.core.apply.call(null, cljs.core.hash_map, map__7874) : map__7874;
+    var highlighted = cljs.core.get.call(null, map__7874__$1, new cljs.core.Keyword(null, "highlighted", "highlighted", 3500421061));
+    return highlighted;
+  });
 };
 blog.responsive_design.core.menu = function menu(items, events, render) {
   var model = blog.responsive_design.core.init_model.call(null, items);
   blog.responsive_design.core.init_events_BANG_.call(null, model, events);
-  return yolk.bacon.on_value.call(null, blog.responsive_design.core.__GT_clj.call(null, yolk.bacon.log.call(null, model)), function(p__7394) {
-    var map__7395 = p__7394;
-    var map__7395__$1 = cljs.core.seq_QMARK_.call(null, map__7395) ? cljs.core.apply.call(null, cljs.core.hash_map, map__7395) : map__7395;
-    var test = map__7395__$1;
-    var selected = cljs.core.get.call(null, map__7395__$1, new cljs.core.Keyword(null, "selected", "selected", 2205476365));
-    var highlighted = cljs.core.get.call(null, map__7395__$1, new cljs.core.Keyword(null, "highlighted", "highlighted", 3500421061));
-    var items__$1 = cljs.core.get.call(null, map__7395__$1, new cljs.core.Keyword(null, "items", "items", 1114430258));
+  return yolk.bacon.on_value.call(null, blog.responsive_design.core.__GT_clj.call(null, model), function(p__7877) {
+    var map__7878 = p__7877;
+    var map__7878__$1 = cljs.core.seq_QMARK_.call(null, map__7878) ? cljs.core.apply.call(null, cljs.core.hash_map, map__7878) : map__7878;
+    var test = map__7878__$1;
+    var selected = cljs.core.get.call(null, map__7878__$1, new cljs.core.Keyword(null, "selected", "selected", 2205476365));
+    var highlighted = cljs.core.get.call(null, map__7878__$1, new cljs.core.Keyword(null, "highlighted", "highlighted", 3500421061));
+    var items__$1 = cljs.core.get.call(null, map__7878__$1, new cljs.core.Keyword(null, "items", "items", 1114430258));
     return render.call(null, items__$1, highlighted, selected);
   });
 };
-var $elem_7396 = jayq.core.$.call(null, new cljs.core.Keyword(null, "pre#array-highlight-list", "pre#array-highlight-list", 1274026333));
-blog.responsive_design.core.menu.call(null, new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, ["so", "it", "goes"], null), blog.responsive_design.core.key_events.call(null, $elem_7396), function(items, highlighted, selected) {
-  return jayq.core.text.call(null, $elem_7396, clojure.string.join.call(null, "\n", cljs.core.map.call(null, function(i, item) {
+var $elem_7879 = jayq.core.$.call(null, new cljs.core.Keyword(null, "pre#array-highlight-list", "pre#array-highlight-list", 1274026333));
+blog.responsive_design.core.menu.call(null, new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, ["so", "it", "goes"], null), blog.responsive_design.core.key_events.call(null, $elem_7879), function(items, highlighted, selected) {
+  return jayq.core.text.call(null, $elem_7879, clojure.string.join.call(null, "\n", cljs.core.map.call(null, function(i, item) {
     return[cljs.core.str(cljs.core._EQ_.call(null, i, highlighted) ? "\x3e" : " "), cljs.core.str(cljs.core._EQ_.call(null, i, selected) ? "*" : " "), cljs.core.str("  "), cljs.core.str(item)].join("");
   }, cljs.core.iterate.call(null, cljs.core.inc, 0), items)));
 });
