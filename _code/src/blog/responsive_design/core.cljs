@@ -40,8 +40,8 @@
 (defn init-model [items]
   (bjb/combine-model
     {:items       items
-     :highlighted -1
-     :selected    -1}))
+     :highlighted "none"
+     :selected    "none"}))
 
 (defn filter-keywords [obs & keys]
   (let [keys (set keys)]
@@ -56,38 +56,58 @@
             (clj->js (assoc m update-key (next-fn m)))))
         (->> (bjb/add-source model)))))
 
-(defn init-events! [model events]
-  (update-model! model events :next :highlighted
-                 (fn [{:keys [items highlighted]}]
-                   (mod (inc highlighted) (count items))))
-
-  (update-model! model events :prev :highlighted
-                 (fn [{:keys [items highlighted]}]
-                   (mod (dec highlighted) (count items))))
-
-  (update-model! model events :select :selected
-                 (fn [{:keys [highlighted]}]
-                   highlighted))
-
-  (let [events (b/filter events number?)]
+(defn bind-highlight! [model events]
+  (let [events (b/filter events #(or (number? %) (= "none" %)))]
     (-> events
         b/skip-duplicates
         (b/map (b/combine-as-array model events))
         ->clj
         (b/map
-          (fn [[m e]] (clj->js (assoc m :highlighted e))))
+          (fn [[m e]]
+            (clj->js (assoc m :highlighted e))))
         (->> (bjb/add-source model)))))
+
+(defn init-events! [model events]
+  (update-model! model events :next :highlighted
+                 (fn [{:keys [items highlighted]}]
+                   (if (= "none" highlighted)
+                     0
+                     (mod (inc highlighted) (count items)))))
+
+  (update-model! model events :prev :highlighted
+                 (fn [{:keys [items highlighted]}]
+                   (if (= "none" highlighted)
+                     (count items)
+                     (mod (dec highlighted) (count items)))))
+
+  (update-model! model events :select :selected
+                 (fn [{:keys [highlighted]}]
+                   highlighted))
+
+  (bind-highlight! model events))
 
 (defn menu [items events render]
   (let [model (init-model items)]
     (init-events! model events)
 
     (-> model
-        b/log
         ->clj
         (b/on-value
           (fn [{:keys [items highlighted selected]}]
             (render items highlighted selected))))))
+
+(defn menu-incremental [items events]
+  (let [model (init-model items)
+        items (-> (bjb/lens model "items") (b/skip-duplicates #(= (vec %1) (vec %2))))
+        highlight (-> (bjb/lens model "highlighted") (b/sliding-window 2))
+        select (-> (bjb/lens model "selected") (b/sliding-window 2))]
+    (init-events! model events)
+
+    {:items       items
+     :highlight   (b/map highlight second)
+     :unhighlight (b/map highlight first)
+     :select      (b/map select second)
+     :unselect    (b/map select first)}))
 
 (let [$elem ($ :pre#array-highlight-list)]
   (menu
@@ -117,7 +137,6 @@
   (-> $ul
       bjb/clickE
       (b/map (constantly :select))
-      b/log
       (b/merge-all (hoverstream $ul) (key-events $ul))))
 
 (let [$elem ($ :ul#ul-highlight-select-list)]
@@ -132,3 +151,49 @@
       (doseq [[item i] (map vector items (iterate inc 0))
               :let [$item ($ (t/li item (= i highlighted) (= i selected)))]]
         (j/append $elem $item)))))
+
+(let [$elem ($ :ul#incremental-list)]
+  (let [updates (menu-incremental
+                  ["You're"
+                   "a"
+                   "Hufflepuff"
+                   "Harry"]
+                  (hover-events $elem))]
+    (-> (:items updates)
+        (b/on-value
+          (fn [items]
+            (j/html $elem "")
+            (doseq [item items]
+              (j/append $elem ($ (t/li item false false)))))))
+
+    (-> (:highlight updates)
+        (b/filter (partial not= "none"))
+        (b/filter (comp not nil?))
+        (b/on-value
+          (fn [n]
+            (-> ($ (str "li:nth-child(" (inc n) ")") $elem)
+                (j/add-class "highlighted")))))
+
+    (-> (:unhighlight updates)
+        (b/filter (partial not= "none"))
+        (b/filter (comp not nil?))
+        (b/on-value
+          (fn [n]
+            (-> ($ (str "li:nth-child(" (inc n) ")") $elem)
+                (j/remove-class "highlighted")))))
+
+    (-> (:select updates)
+        (b/filter (partial not= "none"))
+        (b/filter (comp not nil?))
+        (b/on-value
+          (fn [n]
+            (-> ($ (str "li:nth-child(" (inc n) ")") $elem)
+                (j/add-class "selected")))))
+
+    (-> (:unselect updates)
+        (b/filter (partial not= "none"))
+        (b/filter (comp not nil?))
+        (b/on-value
+          (fn [n]
+            (-> ($ (str "li:nth-child(" (inc n) ")") $elem)
+                (j/remove-class "selected")))))))
