@@ -185,7 +185,7 @@ hr{
      }
 }
 
-.post{
+.post {
 
     width: 51em;
     float: right;
@@ -241,6 +241,17 @@ hr{
           div.proc-3 {
             color: #6666ff;
           }
+          #ul-highlight-select {
+             li.highlighted {
+               background-color: #ccccff;
+             }
+             li.selected {
+               background-color: #ffcccc;
+             }
+             li.highlighted.selected {
+               background-color: #ffccff;
+             }
+          }
        }
 
        div.example-mouse {
@@ -269,6 +280,7 @@ hr{
            margin-top: 15px;
          }
       }
+
    }
 }
 

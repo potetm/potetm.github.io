@@ -1,4 +1,4 @@
-@charset "US-ASCII";
+@charset "UTF-8";
 article,
 aside,
 details,
@@ -1993,6 +1993,12 @@ hr {
         color: #66ff66; }
       .post section div.example div.proc-3, .post section div.example-mouse div.proc-3 {
         color: #6666ff; }
+      .post section div.example #ul-highlight-select li.highlighted, .post section div.example-mouse #ul-highlight-select li.highlighted {
+        background-color: #ccccff; }
+      .post section div.example #ul-highlight-select li.selected, .post section div.example-mouse #ul-highlight-select li.selected {
+        background-color: #ffcccc; }
+      .post section div.example #ul-highlight-select li.highlighted.selected, .post section div.example-mouse #ul-highlight-select li.highlighted.selected {
+        background-color: #ffccff; }
     .post section div.example-mouse {
       font-size: 72px;
       line-height: 200px; }
