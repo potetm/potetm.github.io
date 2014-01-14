@@ -23,19 +23,13 @@
    ESC        :exit})
 
 (defn key-events [$elem]
-  (let [mousein (b/map (bjb/mouseenterE $elem) true)
-        mouseout (b/map (bjb/mouseleaveE $elem) false)
-        has-focus? (bjb/model false)]
-    (-> (b/merge mousein mouseout)
-        (->> (bjb/add-source has-focus?)))
-
-    (-> ($ js/document)
-        bjb/keydownE
-        (b/filter has-focus?)
-        (b/do-action j/prevent)
-        (b/map #(.-keyCode %))
-        (b/filter (comp not nil? KEYS))
-        (b/map #(keycode->action %)))))
+  (-> ($ js/document)
+      bjb/keydownE
+      (b/filter #(j/is $elem ":hover"))
+      (b/do-action j/prevent)
+      (b/map #(.-keyCode %))
+      (b/filter (comp not nil? KEYS))
+      (b/map #(keycode->action %))))
 
 (defn init-model [items]
   (bjb/combine-model
@@ -56,7 +50,7 @@
             (clj->js (assoc m update-key (next-fn m)))))
         (->> (bjb/add-source model)))))
 
-(defn bind-highlight! [model events]
+(defn bind-highlight-number! [model events]
   (let [events (b/filter events #(or (number? %) (= "none" %)))]
     (-> events
         b/skip-duplicates
@@ -84,7 +78,9 @@
                  (fn [{:keys [highlighted]}]
                    highlighted))
 
-  (bind-highlight! model events))
+  (update-model! model events :clear :highlighted (constantly "none"))
+
+  (bind-highlight-number! model events))
 
 (defn menu [items events render]
   (let [model (init-model items)]
@@ -126,7 +122,12 @@
            (str/join "\n")
            (j/text $elem)))))
 
-(defn hoverstream [$ul]
+(defn outstream [$ul]
+  (-> $ul
+      bjb/mouseleaveE
+      (b/map (constantly :clear))))
+
+(defn overstream [$ul]
   (-> $ul
       bjb/mouseoverE
       (b/map #($ (.-target %)))
@@ -137,7 +138,7 @@
   (-> $ul
       bjb/clickE
       (b/map (constantly :select))
-      (b/merge-all (hoverstream $ul) (key-events $ul))))
+      (b/merge-all (outstream $ul) (overstream $ul) (key-events $ul))))
 
 (let [$elem ($ :ul#ul-highlight-select-list)]
   (menu
@@ -151,6 +152,13 @@
       (doseq [[item i] (map vector items (iterate inc 0))
               :let [$item ($ (t/li item (= i highlighted) (= i selected)))]]
         (j/append $elem $item)))))
+
+(defn bind-li-changes! [$elem stream update-fn]
+  (-> stream
+      (b/filter (partial not= "none"))
+      (b/filter (comp not nil?))
+      (b/map #($ (str "li:nth-child(" (inc %) ")") $elem))
+      (b/on-value update-fn)))
 
 (let [$elem ($ :ul#incremental-list)]
   (let [updates (menu-incremental
@@ -166,34 +174,7 @@
             (doseq [item items]
               (j/append $elem ($ (t/li item false false)))))))
 
-    (-> (:highlight updates)
-        (b/filter (partial not= "none"))
-        (b/filter (comp not nil?))
-        (b/on-value
-          (fn [n]
-            (-> ($ (str "li:nth-child(" (inc n) ")") $elem)
-                (j/add-class "highlighted")))))
-
-    (-> (:unhighlight updates)
-        (b/filter (partial not= "none"))
-        (b/filter (comp not nil?))
-        (b/on-value
-          (fn [n]
-            (-> ($ (str "li:nth-child(" (inc n) ")") $elem)
-                (j/remove-class "highlighted")))))
-
-    (-> (:select updates)
-        (b/filter (partial not= "none"))
-        (b/filter (comp not nil?))
-        (b/on-value
-          (fn [n]
-            (-> ($ (str "li:nth-child(" (inc n) ")") $elem)
-                (j/add-class "selected")))))
-
-    (-> (:unselect updates)
-        (b/filter (partial not= "none"))
-        (b/filter (comp not nil?))
-        (b/on-value
-          (fn [n]
-            (-> ($ (str "li:nth-child(" (inc n) ")") $elem)
-                (j/remove-class "selected")))))))
+    (bind-li-changes! $elem (:highlight updates) #(j/add-class % "highlighted"))
+    (bind-li-changes! $elem (:unhighlight updates) #(j/remove-class % "highlighted"))
+    (bind-li-changes! $elem (:select updates) #(j/add-class % "selected"))
+    (bind-li-changes! $elem (:unselect updates) #(j/remove-class % "selected"))))

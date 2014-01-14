@@ -6,12 +6,12 @@ title: "Responsive Design"
   <pre id="array-highlight-list">
   </pre>
 </div>
-<div id="array-highlight-select" class="example">
-  <pre id="array-highlight-select-list">
-  </pre>
-</div>
 <div id="ul-highlight-select" class="example">
    <ul id="ul-highlight-select-list">
+  </ul>
+</div>
+<div id="incremental" class="example">
+   <ul id="incremental-list">
   </ul>
 </div>
 <script type="text/javascript" src="/js/jquery.min.js"></script>
