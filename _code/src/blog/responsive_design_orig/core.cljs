@@ -36,12 +36,14 @@
   (-unselect! [list n]))
 
 (defn calculate-next [list key idx]
-  (let [cnt (count list)]
-    (match [idx key]
-           ["none" :next] 0
-           ["none" :previous] (dec cnt)
-           [_ :next] (mod (inc idx) cnt)
-           [_ :previous] (mod (dec idx) cnt))))
+  (if (number? key)
+    key
+    (let [cnt (count list)]
+      (match [idx key]
+             ["none" :next] 0
+             ["none" :previous] (dec cnt)
+             [_ :next] (mod (inc idx) cnt)
+             [_ :previous] (mod (dec idx) cnt)))))
 
 (defn highlighter-filter [v]
   (or (not (nil? (#{:next :previous :clear} v))) (number? v)))
@@ -89,25 +91,26 @@
     (-> (b/filter in (partial not= :select))
         (b/merge out))))
 
-(defn keystream [has-focus?]
-  (-> ($ js/document)
-      bjb/keydownE
-      (b/filter has-focus?)
-      (b/do-action j/prevent)
-      (b/map keycode)
-      (b/filter (comp not nil? KEYS))
-      (b/map key->keyword)))
-
-(defn create-example [$elem render action]
+(defn keystream [$elem]
   (let [mousein (b/map (bjb/mouseenterE $elem) true)
         mouseout (b/map (bjb/mouseleaveE $elem) false)
         has-focus? (bjb/model false)]
     (-> (b/merge mousein mouseout)
         (->> (bjb/add-source has-focus?)))
-    (when render
-      (render))
-    (-> (action (keystream has-focus?))
-        (b/on-value #(when render (render))))))
+
+    (-> ($ js/document)
+        bjb/keydownE
+        (b/filter has-focus?)
+        (b/do-action j/prevent)
+        (b/map keycode)
+        (b/filter (comp not nil? KEYS))
+        (b/map key->keyword))))
+
+(defn create-example [$elem events render action]
+  (when render
+    (render))
+  (-> (action events)
+      (b/on-value #(when render (render)))))
 
 (defn set-char! [s i c]
   (str (.substring s 0 i) c (.substring s (inc i))))
@@ -129,18 +132,20 @@
       list (array "   Alan Kay"
                   "   J.C.R. Licklider"
                   "   John McCarthy")
+      events (keystream $elem)
       render #(j/text $elem (.join list "\n"))
       action #(highlighter % list)]
-  (create-example $elem render action))
+  (create-example $elem events render action))
 
 (let [$elem ($ :pre#array-highlight-select-list)
       list (array "   Smalltalk"
                   "   Lisp"
                   "   Prolog"
                   "   ML")
+      events (keystream $elem)
       render #(j/text $elem (.join list "\n"))
       action #(selector (highlighter % list) list)]
-  (create-example $elem render action))
+  (create-example $elem events render action))
 
 (defn hoverstream [$ui]
   (-> $ui
@@ -149,11 +154,11 @@
       (b/filter #(j/is % "li"))
       (b/map #(.index %))))
 
-(defn hover-events [$ui has-focus]
-  (-> $ui
+(defn hover-events [$ul]
+  (-> $ul
       bjb/clickE
-      (b/map :select)
-      (b/merge-all (hoverstream $ui) (keystream has-focus))))
+      (b/map (constantly :select))
+      (b/merge-all (hoverstream $ul) (keystream $ul))))
 
 (extend-type js/HTMLUListElement
   ICounted
@@ -162,18 +167,17 @@
 
   IHighlightable
   (-highlight! [list n]
-    (j/add-class ($ (str "li:nth-child(" n ")") ($ list)) "highlighted"))
+    (j/add-class ($ (str "li:nth-child(" (inc n) ")") ($ list)) "highlighted"))
   (-unhighlight! [list n]
-    (j/remove-class ($ (str "li:nth-child(" n ")") ($ list)) "highlighted"))
+    (j/remove-class ($ (str "li:nth-child(" (inc n) ")") ($ list)) "highlighted"))
 
   ISelectable
   (-select! [list n]
-    (j/add-class ($ (str "li:nth-child(" n ")") ($ list)) "selected"))
+    (j/add-class ($ (str "li:nth-child(" (inc n) ")") ($ list)) "selected"))
   (-unselect! [list n]
-    (j/remove-class ($ (str "li:nth-child(" n ")") ($ list)) "selected")))
+    (j/remove-class ($ (str "li:nth-child(" (inc n) ")") ($ list)) "selected")))
 
 (let [$elem ($ :ul#ul-highlight-select-list)
-      list ($ :li $elem)
-      action #(selector (highlighter % list) list)]
-  (js/console.log $elem)
-  (create-example $elem nil action))
+      events (hover-events $elem)
+      action #(selector (highlighter % (aget $elem 0)) (aget $elem 0))]
+  (create-example $elem events nil action))
