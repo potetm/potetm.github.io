@@ -106,10 +106,10 @@
         (b/filter (comp not nil? KEYS))
         (b/map key->keyword))))
 
-(defn create-example [$elem events render action]
+(defn create-example [$elem events render actor]
   (when render
     (render))
-  (-> (action events)
+  (-> (actor events)
       (b/on-value #(when render (render)))))
 
 (defn set-char! [s i c]
