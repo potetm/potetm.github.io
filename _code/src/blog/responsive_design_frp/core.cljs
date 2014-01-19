@@ -65,6 +65,13 @@
             (clj->js (assoc m :highlighted e))))
         (->> (bjb/add-source model)))))
 
+(defn bind-item-update! [model events]
+  (-> events
+      (b/filter #(and (vector? %) (= (first %) :append)))
+      (b/map second)
+      (b/map (fn [i] #(clj->js (if (empty? i) [] (conj (vec %) i)))))
+      (->> (bjb/apply-functions (bjb/lens model "items")))))
+
 (defn init-events! [model events]
   (update-model! model events :next :highlighted
                  (fn [{:keys [items highlighted]}]
@@ -85,12 +92,7 @@
   (update-model! model events :clear-highlight :highlighted (constantly "none"))
 
   (bind-highlight-number! model events)
-
-  (-> events
-      (b/filter #(and (vector? %) (= (first %) :append)))
-      (b/map second)
-      (b/map (fn [i] #(clj->js (if (empty? i) [] (conj (vec %) i)))))
-      (->> (bjb/apply-functions (bjb/lens model "items")))))
+  (bind-item-update! model events))
 
 (defn menu [items events render]
   (let [model (init-model items)]
@@ -142,10 +144,10 @@
 
 (let [$elem ($ :ul#ul-highlight-select-list)]
   (menu
-    ["cocaine"
-     "is a"
-     "helluva"
-     "drug"]
+    ["So"
+     "say"
+     "we"
+     "all"]
     (hover-events $elem)
     (fn [items highlighted selected]
       (j/html $elem "")
@@ -181,7 +183,8 @@
                    "Harry"]
                   (hover-events $elem))]
     (-> (:items updates)
-        (b/skip-duplicates #(= (vec %1) (vec %2)))
+        ->clj
+        (b/skip-duplicates =)
         (b/on-value
           (fn [items]
             (j/html $elem "")
@@ -199,9 +202,8 @@
 
 (let [$elem ($ :ul#incremental-changes-list)]
   (let [events (hover-events $elem)
-        item-events (item-events "I" "am" "the" "Dragon" "Reborn" [])
+        item-events (item-events "Time" "to" "roll" "the" "dice" [])
         updates (menu-incremental [] (b/merge events item-events))]
-
     (-> (:items updates)
         (b/map (b/combine-as-array (:items updates) (:highlight updates) (:select updates)))
         ->clj
