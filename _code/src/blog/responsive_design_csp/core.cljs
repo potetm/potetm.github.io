@@ -132,22 +132,24 @@
   (-unselect! [list n]
     (aset list n (set-char! (aget list n) 1 " "))))
 
-(let [$elem ($ :pre#array-highlight-list)
+(let [$div ($ :div#array-highlight)
+      $pre ($ :pre#array-highlight-list $div)
       list (array "   Alan Kay"
                   "   J.C.R. Licklider"
                   "   John McCarthy")
-      events (keystream $elem)
-      render #(j/text $elem (.join list "\n"))
+      events (keystream $div)
+      render #(j/text $pre (.join list "\n"))
       action #(highlighter % list)]
   (create-example events render action))
 
-(let [$elem ($ :pre#array-highlight-select-list)
+(let [$div ($ :div#array-highlight-select)
+      $pre ($ :pre#array-highlight-select-list $div)
       list (array "   Smalltalk"
                   "   Lisp"
                   "   Prolog"
                   "   ML")
-      events (keystream $elem)
-      render #(j/text $elem (.join list "\n"))
+      events (keystream $div)
+      render #(j/text $pre (.join list "\n"))
       action #(selector (highlighter % list) list)]
   (create-example events render action))
 
@@ -188,8 +190,8 @@
   (-unselect! [list n]
     (do-to-li list n #(j/remove-class % "selected"))))
 
-(let [$elem ($ :ul#ul-highlight-select-list)
-      elem (aget $elem 0)
-      events (hover-events $elem)
-      action #(selector (highlighter % elem) elem)]
+(let [$ul ($ :ul#ul-highlight-select-list)
+      ul (aget $ul 0)
+      events (hover-events $ul)
+      action #(selector (highlighter % ul) ul)]
   (create-example events nil action))

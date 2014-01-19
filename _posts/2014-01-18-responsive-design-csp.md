@@ -1,16 +1,16 @@
 ---
 layout: post_page
-title: "Responsive Design"
+title: "David Nolen's Responsive Design"
 ---
-<div id="array-highlight" class="example">
+<div id="array-highlight" class="example-select">
   <pre id="array-highlight-list">
   </pre>
 </div>
-<div id="array-highlight-select" class="example">
+<div id="array-highlight-select" class="example-select">
   <pre id="array-highlight-select-list">
   </pre>
 </div>
-<div id="ul-highlight-select" class="example">
+<div id="ul-highlight-select" class="example-select">
    <ul id="ul-highlight-select-list">
       <li>Gravity's Rainbow</li>
       <li>Swann's Way</li>

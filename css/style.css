@@ -28,7 +28,7 @@ html {
   -ms-text-size-adjust: 100%; }
 
 a:focus {
-  outline: thin dotted #333333;
+  outline: thin dotted #333;
   outline: 5px auto -webkit-focus-ring-color;
   outline-offset: -2px; }
 
@@ -127,7 +127,7 @@ a:hover {
 .img-polaroid {
   padding: 4px;
   background-color: #fff;
-  border: 1px solid #cccccc;
+  border: 1px solid #ccc;
   border: 1px solid rgba(0, 0, 0, 0.2);
   -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -465,7 +465,7 @@ pre {
   white-space: pre;
   white-space: pre-wrap;
   background-color: #f5f5f5;
-  border: 1px solid #cccccc;
+  border: 1px solid #ccc;
   border: 1px solid rgba(0, 0, 0, 0.15);
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
@@ -645,7 +645,7 @@ ul.icons {
 
 .icon-border {
   border: solid 1px #eeeeee;
-  padding: 0.2em 0.25em 0.15em;
+  padding: .2em .25em .15em;
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   border-radius: 3px; }
@@ -1800,7 +1800,7 @@ ul.icons {
 
   input[type="checkbox"],
   input[type="radio"] {
-    border: 1px solid #cccccc; }
+    border: 1px solid #ccc; }
 
   .form-horizontal .control-label {
     float: none;
@@ -1935,7 +1935,7 @@ hr {
   float: left; }
 
 #post-pagination {
-  font-family: Georgia, "Times New Roman", Times, serif;
+  font-family: Georgia, 'Times New Roman', Times, serif;
   margin-bottom: 3em; }
 
 .home-icon {
@@ -1968,37 +1968,65 @@ hr {
     letter-spacing: 0.05em;
     color: #81b71a; }
     .post h2 span {
-      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; }
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
   .post section {
     font-family: georgia,times,serif;
     line-height: 1.9em;
     font-size: 1.15em;
     color: gray; }
-    .post section div.example, .post section div.example-mouse {
-      font: 13.34px "Inconsolata", arial, clean, sans-serif;
+    .post section div.example, .post section div.example-select, .post section div.example-mouse {
+      font: 13.34px 'Inconsolata',arial,clean,sans-serif;
       color: #666;
       line-height: 1.3em;
       padding-top: 20px;
       height: 200px;
-      border: 1px solid #cccccc;
+      border: 1px solid #ccc;
       background: #efefef;
       box-sizing: border-box;
       text-align: center;
       -webkit-box-sizing: border-box;
       -moz-box-sizing: border-box;
       margin-bottom: 6px; }
-      .post section div.example div.proc-1, .post section div.example-mouse div.proc-1 {
+      .post section div.example div.proc-1, .post section div.example-select div.proc-1, .post section div.example-mouse div.proc-1 {
         color: #ff6666; }
-      .post section div.example div.proc-2, .post section div.example-mouse div.proc-2 {
+      .post section div.example div.proc-2, .post section div.example-select div.proc-2, .post section div.example-mouse div.proc-2 {
         color: #66ff66; }
-      .post section div.example div.proc-3, .post section div.example-mouse div.proc-3 {
+      .post section div.example div.proc-3, .post section div.example-select div.proc-3, .post section div.example-mouse div.proc-3 {
         color: #6666ff; }
-      .post section div.example ul#ul-highlight-select-list li.highlighted, .post section div.example-mouse ul#ul-highlight-select-list li.highlighted, .post section div.example ul#incremental-list li.highlighted, .post section div.example-mouse ul#incremental-list li.highlighted, .post section div.example ul#incremental-changes-list li.highlighted, .post section div.example-mouse ul#incremental-changes-list li.highlighted {
-        background-color: #ccccff; }
-      .post section div.example ul#ul-highlight-select-list li.selected, .post section div.example-mouse ul#ul-highlight-select-list li.selected, .post section div.example ul#incremental-list li.selected, .post section div.example-mouse ul#incremental-list li.selected, .post section div.example ul#incremental-changes-list li.selected, .post section div.example-mouse ul#incremental-changes-list li.selected {
-        background-color: #ffcccc; }
-      .post section div.example ul#ul-highlight-select-list li.highlighted.selected, .post section div.example-mouse ul#ul-highlight-select-list li.highlighted.selected, .post section div.example ul#incremental-list li.highlighted.selected, .post section div.example-mouse ul#incremental-list li.highlighted.selected, .post section div.example ul#incremental-changes-list li.highlighted.selected, .post section div.example-mouse ul#incremental-changes-list li.highlighted.selected {
-        background-color: #ffccff; }
+    .post section div.example-select {
+      text-align: left; }
+      .post section div.example-select pre {
+        position: relative;
+        left: 240px;
+        background-color: transparent;
+        border: none;
+        font-size: 15px; }
+      .post section div.example-select ul {
+        position: relative;
+        left: 242px;
+        background: white;
+        width: 170px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        -webkit-border-radius: 4px;
+        -moz-border-radius: 4px; }
+        .post section div.example-select ul li {
+          list-style: none;
+          cursor: pointer;
+          padding: 4px 4px 4px 8px;
+          border-bottom: 1px solid #ccc; }
+          .post section div.example-select ul li.highlighted {
+            background-color: #ccccff; }
+          .post section div.example-select ul li.selected {
+            background-color: #ffcccc; }
+          .post section div.example-select ul li.highlighted.selected {
+            background-color: #ffccff; }
+    .post section div#array-highlight {
+      height: 125px; }
+    .post section div#array-highlight-select {
+      height: 155px; }
+    .post section div#ul-highlight-select {
+      height: 170px; }
     .post section div.example-mouse {
       font-size: 72px;
       line-height: 200px; }
@@ -2007,7 +2035,7 @@ hr {
       height: 100px; }
       .post section div#example-search button#search {
         background-color: white;
-        border: 1px solid #333333;
+        border: 1px solid #333;
         cursor: pointer;
         border-radius: 4px;
         -webkit-border-radius: 4px;
