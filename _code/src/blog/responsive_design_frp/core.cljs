@@ -58,7 +58,6 @@
 (defn bind-highlight-number! [model events]
   (let [events (b/filter events #(or (number? %) (= "none" %)))]
     (-> events
-        b/skip-duplicates
         (b/map (b/combine-as-array model events))
         ->clj
         (b/map
@@ -99,15 +98,17 @@
 
     (-> model
         ->clj
+        (b/skip-duplicates =)
         (b/on-value
           (fn [{:keys [items highlighted selected]}]
             (render items highlighted selected))))
     model))
 
-(let [$elem ($ :pre#array-highlight-list)]
+(let [$div ($ :div#array-highlight)
+      $pre ($ :pre#array-highlight-list $div)]
   (menu
     ["so" "it" "goes"]
-    (key-events $elem)
+    (key-events $div)
     (fn [items highlighted selected]
       (->> (map
              (fn [i item]
@@ -119,9 +120,9 @@
              (iterate inc 0)
              items)
            (str/join "\n")
-           (j/text $elem)))))
+           (j/text $pre)))))
 
-(defn outstream [$ul]
+(defn leavestream [$ul]
   (-> $ul
       bjb/mouseleaveE
       (b/map (constantly :clear-highlight))))
@@ -137,14 +138,14 @@
   (-> $ul
       bjb/clickE
       (b/map (constantly :select))
-      (b/merge-all (outstream $ul) (overstream $ul) (key-events $ul))))
+      (b/merge-all (leavestream $ul) (overstream $ul) (key-events $ul))))
 
 (let [$elem ($ :ul#ul-highlight-select-list)]
   (menu
-    ["Gravity's Rainbow"
-     "Swann's Way"
-     "Absalom, Absalom"
-     "Moby Dick"]
+    ["cocaine"
+     "is a"
+     "helluva"
+     "drug"]
     (hover-events $elem)
     (fn [items highlighted selected]
       (j/html $elem "")
@@ -203,6 +204,8 @@
 
     (-> (:items updates)
         (b/map (b/combine-as-array (:items updates) (:highlight updates) (:select updates)))
+        ->clj
+        (b/skip-duplicates =)
         (b/on-value
           (fn [[items highlighted selected]]
             (j/html $elem "")

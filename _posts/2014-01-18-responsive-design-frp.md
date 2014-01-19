@@ -2,19 +2,19 @@
 layout: post_page
 title: "Responsive Design"
 ---
-<div id="array-highlight" class="example">
+<div id="array-highlight" class="example-select">
   <pre id="array-highlight-list">
   </pre>
 </div>
-<div id="ul-highlight-select" class="example">
+<div id="ul-highlight-select" class="example-select">
    <ul id="ul-highlight-select-list">
    </ul>
 </div>
-<div id="incremental" class="example">
+<div id="incremental" class="example-select">
    <ul id="incremental-list">
    </ul>
 </div>
-<div id="incremental-changes" class="example">
+<div id="incremental-changes" class="example-select">
    <ul id="incremental-changes-list">
    </ul>
 </div>
