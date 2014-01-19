@@ -14,6 +14,9 @@
 (defn ->clj [obs]
   (b/map obs #(js->clj % :keywordize-keys true)))
 
+(defn ->js [obs]
+  (b/map obs clj->js))
+
 (def KEYS #{ENTER TAB UP_ARROW DOWN_ARROW ESC})
 (def keycode->action
   {ENTER      :select
@@ -37,11 +40,12 @@
                  :highlighted "none"
                  :selected    "none"})]
 
-    (-> (->clj model)
+    (-> model
+        ->clj
         (b/filter (comp empty? :items))
         (b/skip-duplicates =)
         (b/map #(assoc % :highlighted "none" :selected "none"))
-        (b/map clj->js)
+        ->js
         (->> (bjb/add-source model)))
 
     model))
@@ -50,9 +54,8 @@
   (-> (b/filter events (comp not nil? #{event-key}))
       (b/map model)
       ->clj
-      (b/map
-        (fn [{:keys [items highlighted selected] :as m}]
-          (clj->js (assoc m update-key (next-fn m)))))
+      (b/map #(assoc % update-key (next-fn %)))
+      ->js
       (->> (bjb/add-source model))))
 
 (defn bind-highlight-number! [model events]
@@ -60,17 +63,21 @@
     (-> events
         (b/map (b/combine-as-array model events))
         ->clj
-        (b/map
-          (fn [[m e]]
-            (clj->js (assoc m :highlighted e))))
+        (b/map (fn [[m e]] (assoc m :highlighted e)))
+        ->js
         (->> (bjb/add-source model)))))
 
 (defn bind-item-update! [model events]
-  (-> events
-      (b/filter #(and (vector? %) (= (first %) :append)))
-      (b/map second)
-      (b/map (fn [i] #(clj->js (if (empty? i) [] (conj (vec %) i)))))
-      (->> (bjb/apply-functions (bjb/lens model "items")))))
+  (let [lens (bjb/lens model "items")]
+    (-> events
+        (b/filter vector?)
+        (b/filter #(= (first %) :append))
+        (b/map second)
+        (b/on-value
+          (fn [item]
+            (if (empty? item)
+              (bjb/set-value lens [])
+              (bjb/modify lens #(conj (vec %) item))))))))
 
 (defn init-events! [model events]
   (update-model! model events :next :highlighted
