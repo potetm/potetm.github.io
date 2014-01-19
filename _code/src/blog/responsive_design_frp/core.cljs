@@ -202,7 +202,7 @@
 
 (let [$elem ($ :ul#incremental-changes-list)]
   (let [events (hover-events $elem)
-        item-events (item-events "Time" "to" "roll" "the" "dice" [])
+        item-events (item-events "Time" "to" "toss" "the" "dice" [])
         updates (menu-incremental [] (b/merge events item-events))]
     (-> (:items updates)
         (b/map (b/combine-as-array (:items updates) (:highlight updates) (:select updates)))
