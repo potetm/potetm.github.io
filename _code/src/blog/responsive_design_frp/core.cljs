@@ -1,4 +1,4 @@
-(ns blog.responsive-design.core
+(ns blog.responsive-design-frp.core
   (:require [blog.responsive-design.template :as t]
             [clojure.string :as str]
             [jayq.core :refer [$] :as j]

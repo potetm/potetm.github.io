@@ -22,4 +22,4 @@ title: "Responsive Design"
 <script type="text/javascript" src="/js/bacon.js"></script>
 <script type="text/javascript" src="/js/bacon-model.js"></script>
 <script type="text/javascript" src="/js/bacon-jquery.js"></script>
-<script type="text/javascript" src="/js/responsive-design-orig.js"></script>
+<script type="text/javascript" src="/js/responsive-design-csp.js"></script>

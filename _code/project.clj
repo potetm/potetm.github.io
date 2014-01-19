@@ -24,13 +24,29 @@
                                 :externs       ["externs/bacon.js"
                                                 "externs/bacon-jquery.js"
                                                 "externs/jquery-1.8.js"]}}
-                {:id           "responsive-design-orig-dev"
-                 :source-paths ["src/blog/responsive_design_orig"]
+                {:id           "responsive-design-csp-dev"
+                 :source-paths ["src/blog/responsive_design_csp"]
                  :compiler     {:optimizations :whitespace
                                 :pretty-print  true
-                                :output-to     "../js/responsive-design-orig.js"}}
-                {:id           "responsive-design-dev"
-                 :source-paths ["src/blog/responsive_design"]
+                                :output-to     "../js/responsive-design-csp.js"}}
+                {:id           "responsive-design-csp"
+                 :source-paths ["src/blog/responsive_design_csp"]
+                 :compiler     {:optimizations :advanced
+                                :pretty-print  false
+                                :output-to     "../js/responsive-design-csp.js"
+                                :externs       ["externs/bacon.js"
+                                                "externs/bacon-jquery.js"
+                                                "externs/jquery-1.8.js"]}}
+                {:id           "responsive-design-frp-dev"
+                 :source-paths ["src/blog/responsive_design_frp"]
                  :compiler     {:optimizations :whitespace
                                 :pretty-print  true
-                                :output-to     "../js/responsive-design.js"}}]})
+                                :output-to     "../js/responsive-design-frp.js"}}
+                {:id           "responsive-design-frp"
+                 :source-paths ["src/blog/responsive_design_frp"]
+                 :compiler     {:optimizations :advanced
+                                :pretty-print  false
+                                :output-to     "../js/responsive-design-frp.js"
+                                :externs       ["externs/bacon.js"
+                                                "externs/bacon-jquery.js"
+                                                "externs/jquery-1.8.js"]}}]})

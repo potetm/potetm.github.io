@@ -1,4 +1,4 @@
-(ns blog.responsive-design-orig.core
+(ns blog.responsive-design-csp.core
   (:require-macros
     [cljs.core.match.macros :refer [match]])
   (:require
@@ -36,14 +36,17 @@
   (-unselect! [list n]))
 
 (defn calculate-next [list key idx]
-  (if (number? key)
+  (let [cnt (count list)]
+    (match [idx key]
+           ["none" :next] 0
+           ["none" :previous] (dec cnt)
+           [_ :next] (mod (inc idx) cnt)
+           [_ :previous] (mod (dec idx) cnt))))
+
+(defn next-val [list key idx]
+  (if (or (number? key) (= :clear key))
     key
-    (let [cnt (count list)]
-      (match [idx key]
-             ["none" :next] 0
-             ["none" :previous] (dec cnt)
-             [_ :next] (mod (inc idx) cnt)
-             [_ :previous] (mod (dec idx) cnt)))))
+    (calculate-next list key idx)))
 
 (defn highlighter-filter [v]
   (or (not (nil? (#{:next :previous :clear} v))) (number? v)))
@@ -52,7 +55,7 @@
   ([in list]
    (highlighter in list (b/constant true)))
   ([in list control?]
-   (let [cur (bjb/model :none)
+   (let [cur (bjb/model "none")
          prev-cur (b/sliding-window cur 2 2)
          out (b/bus)]
      (-> prev-cur
@@ -60,12 +63,13 @@
            (fn [[prev cur]]
              (when (number? prev)
                (-unhighlight! list prev))
-             (-highlight! list cur)
+             (when (not= cur :clear)
+               (-highlight! list cur))
              (b/push out cur))))
 
      (-> in
          (b/filter highlighter-filter)
-         (b/zip-with cur (partial calculate-next list))
+         (b/map (b/combine-with in cur (partial next-val list)))
          (->> (bjb/add-source cur)))
 
      (-> (b/filter in (comp not highlighter-filter))
@@ -106,7 +110,7 @@
         (b/filter (comp not nil? KEYS))
         (b/map key->keyword))))
 
-(defn create-example [$elem events render actor]
+(defn create-example [events render actor]
   (when render
     (render))
   (-> (actor events)
@@ -135,7 +139,7 @@
       events (keystream $elem)
       render #(j/text $elem (.join list "\n"))
       action #(highlighter % list)]
-  (create-example $elem events render action))
+  (create-example events render action))
 
 (let [$elem ($ :pre#array-highlight-select-list)
       list (array "   Smalltalk"
@@ -145,10 +149,14 @@
       events (keystream $elem)
       render #(j/text $elem (.join list "\n"))
       action #(selector (highlighter % list) list)]
-  (create-example $elem events render action))
+  (create-example events render action))
 
-(defn hoverstream [$ui]
-  (-> $ui
+(defn mouseleave [$ul]
+  (-> (bjb/mouseleaveE $ul)
+      (b/map (constantly :clear))))
+
+(defn mouseover [$ul]
+  (-> $ul
       bjb/mouseoverE
       (b/map #($ (.-target %)))
       (b/filter #(j/is % "li"))
@@ -158,7 +166,10 @@
   (-> $ul
       bjb/clickE
       (b/map (constantly :select))
-      (b/merge-all (hoverstream $ul) (keystream $ul))))
+      (b/merge-all (mouseleave $ul) (mouseover $ul) (keystream $ul))))
+
+(defn do-to-li [list n update-fn]
+  (update-fn ($ (str "li:nth-child(" (inc n) ")") ($ list))))
 
 (extend-type js/HTMLUListElement
   ICounted
@@ -167,17 +178,18 @@
 
   IHighlightable
   (-highlight! [list n]
-    (j/add-class ($ (str "li:nth-child(" (inc n) ")") ($ list)) "highlighted"))
+    (do-to-li list n #(j/add-class % "highlighted")))
   (-unhighlight! [list n]
-    (j/remove-class ($ (str "li:nth-child(" (inc n) ")") ($ list)) "highlighted"))
+    (do-to-li list n #(j/remove-class % "highlighted")))
 
   ISelectable
   (-select! [list n]
-    (j/add-class ($ (str "li:nth-child(" (inc n) ")") ($ list)) "selected"))
+    (do-to-li list n #(j/add-class % "selected")))
   (-unselect! [list n]
-    (j/remove-class ($ (str "li:nth-child(" (inc n) ")") ($ list)) "selected")))
+    (do-to-li list n #(j/remove-class % "selected"))))
 
 (let [$elem ($ :ul#ul-highlight-select-list)
+      elem (aget $elem 0)
       events (hover-events $elem)
-      action #(selector (highlighter % (aget $elem 0)) (aget $elem 0))]
-  (create-example $elem events nil action))
+      action #(selector (highlighter % elem) elem)]
+  (create-example events nil action))
