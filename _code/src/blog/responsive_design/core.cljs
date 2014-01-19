@@ -32,23 +32,28 @@
       (b/map #(keycode->action %))))
 
 (defn init-model [items]
-  (bjb/combine-model
-    {:items       items
-     :highlighted "none"
-     :selected    "none"}))
+  (let [model (bjb/combine-model
+                {:items       items
+                 :highlighted "none"
+                 :selected    "none"})]
 
-(defn filter-keywords [obs & keys]
-  (let [keys (set keys)]
-    (b/filter obs (comp not nil? keys))))
+    (-> (->clj model)
+        (b/filter (comp empty? :items))
+        (b/skip-duplicates =)
+        (b/map #(assoc % :highlighted "none" :selected "none"))
+        (b/map clj->js)
+        (->> (bjb/add-source model)))
+
+    model))
 
 (defn update-model! [model events event-key update-key next-fn]
-  (let [events (filter-keywords events event-key)]
-    (-> (b/map events model)
-        ->clj
-        (b/map
-          (fn [{:keys [items highlighted selected] :as m}]
-            (clj->js (assoc m update-key (next-fn m)))))
-        (->> (bjb/add-source model)))))
+  (-> (b/filter events (comp not nil? #{event-key}))
+      (b/map model)
+      ->clj
+      (b/map
+        (fn [{:keys [items highlighted selected] :as m}]
+          (clj->js (assoc m update-key (next-fn m)))))
+      (->> (bjb/add-source model))))
 
 (defn bind-highlight-number! [model events]
   (let [events (b/filter events #(or (number? %) (= "none" %)))]
@@ -78,9 +83,15 @@
                  (fn [{:keys [highlighted]}]
                    highlighted))
 
-  (update-model! model events :clear :highlighted (constantly "none"))
+  (update-model! model events :clear-highlight :highlighted (constantly "none"))
 
-  (bind-highlight-number! model events))
+  (bind-highlight-number! model events)
+
+  (-> events
+      (b/filter #(and (vector? %) (= (first %) :append)))
+      (b/map second)
+      (b/map (fn [i] #(clj->js (if (empty? i) [] (conj (vec %) i)))))
+      (->> (bjb/apply-functions (bjb/lens model "items")))))
 
 (defn menu [items events render]
   (let [model (init-model items)]
@@ -90,20 +101,8 @@
         ->clj
         (b/on-value
           (fn [{:keys [items highlighted selected]}]
-            (render items highlighted selected))))))
-
-(defn menu-incremental [items events]
-  (let [model (init-model items)
-        items (-> (bjb/lens model "items") (b/skip-duplicates #(= (vec %1) (vec %2))))
-        highlight (-> (bjb/lens model "highlighted") (b/sliding-window 2))
-        select (-> (bjb/lens model "selected") (b/sliding-window 2))]
-    (init-events! model events)
-
-    {:items       items
-     :highlight   (b/map highlight second)
-     :unhighlight (b/map highlight first)
-     :select      (b/map select second)
-     :unselect    (b/map select first)}))
+            (render items highlighted selected))))
+    model))
 
 (let [$elem ($ :pre#array-highlight-list)]
   (menu
@@ -125,7 +124,7 @@
 (defn outstream [$ul]
   (-> $ul
       bjb/mouseleaveE
-      (b/map (constantly :clear))))
+      (b/map (constantly :clear-highlight))))
 
 (defn overstream [$ul]
   (-> $ul
@@ -153,6 +152,19 @@
               :let [$item ($ (t/li item (= i highlighted) (= i selected)))]]
         (j/append $elem $item)))))
 
+(defn menu-incremental [items events]
+  (let [model (init-model items)
+        items (bjb/lens model "items")
+        highlight (-> (bjb/lens model "highlighted") (b/sliding-window 2))
+        select (-> (bjb/lens model "selected") (b/sliding-window 2))]
+    (init-events! model events)
+
+    {:items       items
+     :highlight   (b/map highlight second)
+     :unhighlight (b/map highlight first)
+     :select      (b/map select second)
+     :unselect    (b/map select first)}))
+
 (defn bind-li-changes! [$elem stream update-fn]
   (-> stream
       (b/filter (partial not= "none"))
@@ -168,11 +180,35 @@
                    "Harry"]
                   (hover-events $elem))]
     (-> (:items updates)
+        (b/skip-duplicates #(= (vec %1) (vec %2)))
         (b/on-value
           (fn [items]
             (j/html $elem "")
             (doseq [item items]
               (j/append $elem ($ (t/li item false false)))))))
+
+    (bind-li-changes! $elem (:highlight updates) #(j/add-class % "highlighted"))
+    (bind-li-changes! $elem (:unhighlight updates) #(j/remove-class % "highlighted"))
+    (bind-li-changes! $elem (:select updates) #(j/add-class % "selected"))
+    (bind-li-changes! $elem (:unselect updates) #(j/remove-class % "selected"))))
+
+(defn item-events [& items]
+  (-> (b/repeatedly 1000 (clj->js items))
+      (b/map (partial vector :append))))
+
+(let [$elem ($ :ul#incremental-changes-list)]
+  (let [events (hover-events $elem)
+        item-events (item-events "I" "am" "the" "Dragon" "Reborn" [])
+        updates (menu-incremental [] (b/merge events item-events))]
+
+    (-> (:items updates)
+        (b/map (b/combine-as-array (:items updates) (:highlight updates) (:select updates)))
+        (b/on-value
+          (fn [[items highlighted selected]]
+            (j/html $elem "")
+            (doseq [[item i] (map vector items (iterate inc 0))
+                    :let [$item ($ (t/li item (= i highlighted) (= i selected)))]]
+              (j/append $elem $item)))))
 
     (bind-li-changes! $elem (:highlight updates) #(j/add-class % "highlighted"))
     (bind-li-changes! $elem (:unhighlight updates) #(j/remove-class % "highlighted"))

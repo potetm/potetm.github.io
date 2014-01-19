@@ -2,6 +2,7 @@
 css/.sass-cache
 _site
 *.iml
+*.swp
 .idea
 
 _code/target

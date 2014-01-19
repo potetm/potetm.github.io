@@ -1993,11 +1993,11 @@ hr {
         color: #66ff66; }
       .post section div.example div.proc-3, .post section div.example-mouse div.proc-3 {
         color: #6666ff; }
-      .post section div.example ul#ul-highlight-select-list li.highlighted, .post section div.example-mouse ul#ul-highlight-select-list li.highlighted, .post section div.example ul#incremental-list li.highlighted, .post section div.example-mouse ul#incremental-list li.highlighted {
+      .post section div.example ul#ul-highlight-select-list li.highlighted, .post section div.example-mouse ul#ul-highlight-select-list li.highlighted, .post section div.example ul#incremental-list li.highlighted, .post section div.example-mouse ul#incremental-list li.highlighted, .post section div.example ul#incremental-changes-list li.highlighted, .post section div.example-mouse ul#incremental-changes-list li.highlighted {
         background-color: #ccccff; }
-      .post section div.example ul#ul-highlight-select-list li.selected, .post section div.example-mouse ul#ul-highlight-select-list li.selected, .post section div.example ul#incremental-list li.selected, .post section div.example-mouse ul#incremental-list li.selected {
+      .post section div.example ul#ul-highlight-select-list li.selected, .post section div.example-mouse ul#ul-highlight-select-list li.selected, .post section div.example ul#incremental-list li.selected, .post section div.example-mouse ul#incremental-list li.selected, .post section div.example ul#incremental-changes-list li.selected, .post section div.example-mouse ul#incremental-changes-list li.selected {
         background-color: #ffcccc; }
-      .post section div.example ul#ul-highlight-select-list li.highlighted.selected, .post section div.example-mouse ul#ul-highlight-select-list li.highlighted.selected, .post section div.example ul#incremental-list li.highlighted.selected, .post section div.example-mouse ul#incremental-list li.highlighted.selected {
+      .post section div.example ul#ul-highlight-select-list li.highlighted.selected, .post section div.example-mouse ul#ul-highlight-select-list li.highlighted.selected, .post section div.example ul#incremental-list li.highlighted.selected, .post section div.example-mouse ul#incremental-list li.highlighted.selected, .post section div.example ul#incremental-changes-list li.highlighted.selected, .post section div.example-mouse ul#incremental-changes-list li.highlighted.selected {
         background-color: #ffccff; }
     .post section div.example-mouse {
       font-size: 72px;
