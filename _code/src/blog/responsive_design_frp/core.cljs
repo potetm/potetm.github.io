@@ -1,5 +1,5 @@
 (ns blog.responsive-design-frp.core
-  (:require [blog.responsive-design.template :as t]
+  (:require [blog.responsive-design-frp.template :as t]
             [clojure.string :as str]
             [jayq.core :refer [$] :as j]
             [yolk.bacon :as b]
