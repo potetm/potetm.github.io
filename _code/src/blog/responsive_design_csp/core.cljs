@@ -31,10 +31,6 @@
   (-highlight! [list n])
   (-unhighlight! [list n]))
 
-(defprotocol ISelectable
-  (-select! [list n])
-  (-unselect! [list n]))
-
 (defn calculate-next [list key idx]
   (let [cnt (count list)]
     (match [idx key]
@@ -75,26 +71,6 @@
      (-> (b/filter in (comp not highlighter-filter))
          (b/merge out)))))
 
-(defn selector [in list]
-  (let [highlighted (b/to-property (b/filter in number?))
-        selected (bjb/model nil)
-        prev-cur (b/sliding-window selected 2 2)
-        out (b/bus)]
-    (-> prev-cur
-        (b/on-value
-          (fn [[prev cur]]
-            (when (number? prev)
-              (-unselect! list prev))
-            (-select! list cur)
-            (b/push out cur))))
-    (-> in
-        (b/filter (partial = :select))
-        (b/map highlighted)
-        (->> (bjb/add-source selected)))
-
-    (-> (b/filter in (partial not= :select))
-        (b/merge out))))
-
 (defn keystream [$elem]
   (let [mousein (b/map (bjb/mouseenterE $elem) true)
         mouseout (b/map (bjb/mouseleaveE $elem) false)
@@ -124,13 +100,7 @@
   (-highlight! [list n]
     (aset list n (set-char! (aget list n) 0 ">")))
   (-unhighlight! [list n]
-    (aset list n (set-char! (aget list n) 0 " ")))
-
-  ISelectable
-  (-select! [list n]
-    (aset list n (set-char! (aget list n) 1 "*")))
-  (-unselect! [list n]
-    (aset list n (set-char! (aget list n) 1 " "))))
+    (aset list n (set-char! (aget list n) 0 " "))))
 
 (let [$div ($ :div#array-highlight)
       $pre ($ :pre#array-highlight-list $div)
@@ -141,6 +111,37 @@
       render #(j/text $pre (.join list "\n"))
       action #(highlighter % list)]
   (create-example events render action))
+
+(defprotocol ISelectable
+  (-select! [list n])
+  (-unselect! [list n]))
+
+(defn selector [in list]
+  (let [highlighted (b/to-property (b/filter in number?))
+        selected (bjb/model nil)
+        prev-cur (b/sliding-window selected 2 2)
+        out (b/bus)]
+    (-> prev-cur
+        (b/on-value
+          (fn [[prev cur]]
+            (when (number? prev)
+              (-unselect! list prev))
+            (-select! list cur)
+            (b/push out cur))))
+    (-> in
+        (b/filter (partial = :select))
+        (b/map highlighted)
+        (->> (bjb/add-source selected)))
+
+    (-> (b/filter in (partial not= :select))
+        (b/merge out))))
+
+(extend-type array
+  ISelectable
+  (-select! [list n]
+    (aset list n (set-char! (aget list n) 1 "*")))
+  (-unselect! [list n]
+    (aset list n (set-char! (aget list n) 1 " "))))
 
 (let [$div ($ :div#array-highlight-select)
       $pre ($ :pre#array-highlight-select-list $div)
