@@ -2,29 +2,15 @@
 layout: post_page
 title: "David Nolen's Responsive Design"
 ---
-In my [last post](http://potetm.github.io/2014/01/07/frp.html), I stated that I was going to use
-[bacon.js](https://github.com/baconjs/bacon.js) to work through the CSP posts from [David Nolen's awesome
-blog](http://swannodette.github.io/).  My goal is to evaluate the strengths and weaknesses of FRP and CSP.  Well it didn't take long to get
-somewhere.
 
-In [this post](#recursive-reference-suckas!), I'm going to walk through my solutions to [Nolen's second CSP
-article](http://swannodette.github.io/2013/07/31/extracting-processes/) so that you can see some of the differences between bacon and
-core.async.
+As I stated in my [previous blog post](/2014/01/07/frp.html), I recently started a series following [David
+Nolen's](http://swannodette.github.io/) excellent series of posts on Communicating Sequential Processes.  After three weeks of work and
+consideration, I'm finally ready to comment on his [second post on CSP](http://swannodette.github.io/2013/07/31/extracting-processes/), *CSP
+is Responsive Design*.
 
-Before we jump in, I want to have a quick digression into the way I want to evaluate the two paradigms.  In my mind, there are three major
-components of a paradigm:
-
-  1. Syntax - The way the code *looks*
-  2. Semantics - What the syntax *means*
-  3. Function - What actually *happens* on execution
-
-Each component is important in its own way, and the balance between them is what, in part, defines a paradigm, language, library, etc.  For
-example, a language may have semantic and functional depth, but often at the expense of syntactic simplicity (think Java).  Or two languages
-might be syntactically similar, yet have important semantic differences (think generics in Java vs C#).  Or, as in our case, two libraries
-may have very different syntax and semantics, yet are functionally identical.
-
-Keep those components in mind as you go through and compare this post with Nolen's.  At the end of the post I'll try to pull it all
-together.
+This is going to be a post in two parts.  In this post I will show my work closely following Nolen's design in his original post.  In the
+next post I will walk through how I would design the same component from scratch with bacon.js.  Both exercises have been useful in
+deciphering the relative strengths and weaknesses of core.async and bacon.js.
 
 Let's get started.
 
@@ -123,9 +109,6 @@ Now, let's put it all to good use.
   </pre>
 </div>
 
-I'd like to take a second here to point out that, in this example, both this solution and Nolen's solution are functionally and semantically
-*identical*.
-
 Just like Nolen's initial examples, our rendering surface is a plain old JavaScript array.  Just like in his example, we mutate that array
 in place, and those modifications are reflected on the screen.
 
@@ -180,14 +163,7 @@ And put it all together:
   </pre>
 </div>
 
-Here, friends, is where Nolen and I diverge.  You'll notice that I have two coordination processes operating on the same mutable list:
-`#(selector (highlighter % list) list)`.  The issue with that is the bacon.js library doesn't afford any sort of blocking semantics.  What
-this means is, if any part of this application were threaded, we would suddenly be at the mercy of the race condition gods.
-
-However, because JavaScript is a single-threaded host, the application that I've written will work exactly as intended.  Therefore, although
-there are *semantic* differences between our solutions, *functionally* they are the same.  More on this at the end.
-
-For now, let's move on to his last example.  First we need to extend our event stream to include mouse events.
+Let's move on to his last example.  First we need to extend our event stream to include mouse events.
 
 ```clojure
 (defn mouseleave [$ul]
@@ -250,41 +226,9 @@ Oh so sweet and simple.
 
 ---
 
-***WARNING: The following content contains stylistic opinions which are inherently subjective.  YMMV.***
-
-Before we talk about core.async and bacon.js, I want to take a second to evaluate the overall design that Nolen is advocating.  What's clear
-is that this design isn't necessarily tied to core.async, which means that he is indeed getting close to some fundamental truths.  I think
-his method of defining a single pipeline which he calls his *process protocol* is simple and easily extensible.  I also agree that event
-coordination should be separated from event stream creation.  This helps provide clarity to complex processes.
-
-However, I disagree that *interface* representation is the third crucial concern.  The third concern is *Side Effect Action*.  In the case
-of the browser, most of your side effects are going to be in the display, but they might be logging, calling a remote, etc.  Calling the it
-interface representation is effectively prescribing the cure before diagnosing the problem.  In the case of this example, interface
-representation also ties you in to mutable structures, which I find unnecessarily complex.
-
-So, in my opinion, a simpler, more fundamental statement of Nolen's trichotomic design would be:
-
-  1. Event Stream Processing
-  2. Event Stream Coordination
-  3. Side Effect Action
-
-I understand the point of confining your side effects to an interface representation is to allow for easier pipelining of stream
-coordination, but I still feel it's useful to think about things one abstraction level higher.  As we'll see in my next post, separating
-these concerns allows you to introduce clarity and structure to your code, even when you aren't pipelining events.
-
----
-
-Now onto core.async and bacon.js.
-
-What I discovered as I worked through Nolen's second post is that the design Nolen advocates is not only possible using FRP, it's quite
-straightforward.  That being said, the differences between the two solutions are much deeper than the syntactic level.  There are
-fundamental semantic differences between bacon and core.asyn that become very clear once you enter a parallel environment.  As I mentioned
-earlier, the lack of blocking semantics in bacon makes it inherently unsafe to do highlighting *and* selection on a mutable structure in a
-threaded environment.  With core.async, this is not only alright, it's modus operandi.
-
-However, that does not necessarily mean that core.async is the better tool for all jobs.  On the contrary, I believe there is a great deal
-of cognitive overhead associated with its semantic depth, making it comparatively kludgy to use in the browser where parallel processing is
-not a concern.
+What I discovered as I worked through Nolen's second post is that the overarching design Nolen advocates is not only possible using FRP,
+it's quite straightforward.  That being said, the differences between the two solutions are much deeper than the syntactic level.  There are
+fundamental semantic differences between FRP and CSP.
 
 Take, for example, Nolen's selector:
 
@@ -332,20 +276,44 @@ And my selector:
         (b/merge out))))
 ```
 
+Nolen's go block outlines a *process*.  Go figure, right?  But let that really sink in.  He's dealing with asynchronous events, executing in an
+unknown order, yet he's able to write code that iteratively states what he wants done.
+
+My code, on the other hand, outlines a *flow*.  Information comes in, and things *react* to that information.  There is no process per se.
+Things just *happen*.
+
+And that, my friends, is the fundamental difference between FRP and CSP, at least as best as I can figure.
+
+CSP allows you to stop thinking about events and execution order and allows you to focus on *processes*.  Everything is framed in terms of
+what jobs need to be done.  You break a problem into its fundamental steps, create a process for each step, and watch the magic happen.
+This is a very different mindset from every other solution that I know of.  Callbacks are about reacting to events.  Promises are about
+reacting to events.  The R in FRP is "Reactive".
+
+This, in my mind, is *huge*.  It took a long time for me to really grok this simple fact, but once I did, I immediately saw the power and
+flexibility it might afford.  If nothing else, seeing problems from this very different angle might have a massive impact on the nature of
+your solutions in the future.
+
+However, that being said, I'm not completely sold on the assertion that core.async is the most powerful library for handling UI.
+
+Set aside for a moment all arguments about the nature of the human mind and its ability to reason about and deconstruct problems.  Look
+again at the two code blocks above and consider the nature of the two *solutions*.
+
 While the core.async example might be slightly more compact, the bacon example is much more--pardon the overused, overloaded
 term--declarative.  No looping, no recursing, no nested conditionals.  In fact, this block follows the aforementioned Nolen trichotomic design:
 
-  * The first thread handles UI representation
-  * The second thread handles event coordination
+  * The first statement handles UI (via interface representation)
+  * The second statement handles event coordination
 
-The third thread handles the pass-through stream, which isn't strictly necessary.  Processed events are passed in, so that's irrelevant in
+The third statement handles the pass-through stream, which isn't strictly necessary.  Processed events are passed in, so that's irrelevant in
 this scope.
 
-Given this clarity and power, I think it would be a mistake to disregard FRP in favor of CSP, especially where parallel processing is not a
-concern.  In addition, I would need to evaluate how FRP fairs when blocking semantics are built into the library in order to properly
-compare FRP to CSP in threaded environments.  I've never had such a need, and thus have never used such a library, though I know [they
-exist](https://github.com/Netflix/RxJava/wiki/Blocking-Observable-Operators).  Given what I've found so far, the results of such a
-study would be very interesting to me.
+It would be very difficult for me two look at those two code blocks and come away with the idea that core.async is superior in any way to
+bacon.js.  Quite the contrary in my mind.
+
+Per [Nolen's suggestion](https://twitter.com/swannodette/status/420638953872826368), I do intend on seeing this project through the full
+autocompleter.  I'm still very open to having my mind changed.  However, as I previously mentioned, I'm going to go on a slight detour in
+my next post and explore what this same component might look like if I wrote it from scratch with bacon.js.  I feel that it would be
+interesting and informative comparison.
 
 ---
 
