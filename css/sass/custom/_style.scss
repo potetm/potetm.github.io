@@ -191,6 +191,11 @@ hr{
     float: right;
     margin-top: -2em;
 
+    p {
+      margin-top: 12px;
+      margin-bottom: 12px;
+    }
+
     h5{
         margin:0.4em 0 2.5em 0;
         font-weight: normal;
@@ -214,7 +219,7 @@ hr{
 
     section{
         font-family: georgia,times,serif;
-        line-height: 1.9em;
+        line-height: 1.6em;
         font-size: 1.15em;
         color: darken($grayLight, 10%);
 

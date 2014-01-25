@@ -1954,6 +1954,9 @@ hr {
   width: 51em;
   float: right;
   margin-top: -2em; }
+  .post p {
+    margin-top: 12px;
+    margin-bottom: 12px; }
   .post h5 {
     margin: 0.4em 0 2.5em 0;
     font-weight: normal;
@@ -1971,7 +1974,7 @@ hr {
       font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
   .post section {
     font-family: georgia,times,serif;
-    line-height: 1.9em;
+    line-height: 1.6em;
     font-size: 1.15em;
     color: gray; }
     .post section div.example, .post section div.example-select, .post section div.example-mouse {

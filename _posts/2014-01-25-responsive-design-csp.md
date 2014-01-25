@@ -2,7 +2,6 @@
 layout: post_page
 title: "David Nolen's Responsive Design"
 ---
-
 As I stated in my [previous blog post](/2014/01/07/frp.html), I recently started a series following [David
 Nolen's](http://swannodette.github.io/) excellent series of posts on Communicating Sequential Processes.  After three weeks of work and
 consideration, I'm finally ready to comment on his [second post on CSP](http://swannodette.github.io/2013/07/31/extracting-processes/), *CSP
