@@ -257,21 +257,20 @@ is that this design isn't necessarily tied to core.async, which means that he is
 his method of defining a single pipeline which he calls his *process protocol* is simple and easily extensible.  I also agree that event
 coordination should be separated from event stream creation.  This helps provide clarity to complex processes.
 
-However, I disagree that *interface* representation is the third crucial concern.  The third concern is *UI representation*.  Calling the it
+However, I disagree that *interface* representation is the third crucial concern.  The third concern is *Side Effect Action*.  In the case
+of the browser, most of your side effects are going to be in the display, but they might be logging, calling a remote, etc.  Calling the it
 interface representation is effectively prescribing the cure before diagnosing the problem.  In the case of this example, interface
 representation also ties you in to mutable structures, which I find unnecessarily complex.
 
-In addition, I would pull out the word *stream* from the design as a whole.  FRP and CSP handle events in streams, but that doesn't mean
-that's the *only* way to effectively handle events (though I've yet to set a better alternative).
-
 So, in my opinion, a simpler, more fundamental statement of Nolen's trichotomic design would be:
 
-  1. Event Processing
-  2. Event Coordination
-  3. UI Representation
+  1. Event Stream Processing
+  2. Event Stream Coordination
+  3. Side Effect Action
 
-Separating these three concerns in your design brings a surprising amount of clarity and structure to your code.  Nolen does a good job of
-it, but I think the tools in the bacon toolbox allows us to go further.  In my next post, I'll do just that.
+I understand the point of confining your side effects to an interface representation is to allow for easier pipelining of stream
+coordination, but I still feel it's useful to think about things one abstraction level higher.  As we'll see in my next post, separating
+these concerns allows you to introduce clarity and structure to your code, even when you aren't pipelining events.
 
 ---
 
@@ -347,6 +346,11 @@ concern.  In addition, I would need to evaluate how FRP fairs when blocking sema
 compare FRP to CSP in threaded environments.  I've never had such a need, and thus have never used such a library, though I know [they
 exist](https://github.com/Netflix/RxJava/wiki/Blocking-Observable-Operators).  Given what I've found so far, the results of such a
 study would be very interesting to me.
+
+---
+
+Before I get out of here, I'd like to thank both [Jonathan Boston](https://github.com/bostonou) and [Caleb
+Phillips](https://github.com/calebphillips) for giving me some very constructive feedback on the post before I went to press.
 
 <style>
   ol {
