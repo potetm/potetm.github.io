@@ -7,7 +7,7 @@ Nolen's](http://swannodette.github.io/) excellent series of posts on Communicati
 consideration, I'm finally ready to comment on his [second post on CSP](http://swannodette.github.io/2013/07/31/extracting-processes/), *CSP
 is Responsive Design*.
 
-This is going to be a post in two parts.  In this post I will show my work closely following Nolen's design in his original post.  In the
+This is going to be a two part article.  In this post I will show my work closely following Nolen's design in his original post.  In the
 next post I will walk through how I would design the same component from scratch with bacon.js.  Both exercises have been useful in
 deciphering the relative strengths and weaknesses of core.async and bacon.js.
 
@@ -275,18 +275,18 @@ And my selector:
         (b/merge out))))
 ```
 
-Nolen's go block outlines a *process*.  Go figure, right?  But let that really sink in.  He's dealing with asynchronous events, executing in an
-unknown order, yet he's able to write code that iteratively states what he wants done.
+Nolen's go block outlines a *process*.  Go figure, right?  But let that really sink in.  He's dealing with asynchronous events, yet he is
+able to program and reason as if it *were* synchronous.
 
 My code, on the other hand, outlines a *flow*.  Information comes in, and things *react* to that information.  There is no process per se.
 Things just *happen*.
 
 And that, my friends, is the fundamental difference between FRP and CSP, at least as best as I can figure.
 
-CSP allows you to stop thinking about events and execution order and allows you to focus on *processes*.  Everything is framed in terms of
-what jobs need to be done.  You break a problem into its fundamental steps, create a process for each step, and watch the magic happen.
-This is a very different mindset from every other solution that I know of.  Callbacks are about reacting to events.  Promises are about
-reacting to events.  The R in FRP is "Reactive".
+CSP allows you to stop thinking about events and execution order and allows you to focus on *processes* (CSP *is* Communicating Sequential
+*Processes* after all).  Everything is framed in terms of what jobs need to be done.  You break a problem into its fundamental steps, create
+a process for each step, and watch the magic happen.  This is a very different mindset from every other solution that I know of.  Callbacks
+are about reacting to events.  Promises are about reacting to events.  The R in FRP is "Reactive".
 
 This, in my mind, is *huge*.  It took a long time for me to really grok this simple fact, but once I did, I immediately saw the power and
 flexibility it might afford.  If nothing else, seeing problems from this very different angle might have a massive impact on the nature of
