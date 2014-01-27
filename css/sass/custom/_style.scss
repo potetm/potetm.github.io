@@ -185,11 +185,16 @@ hr{
      }
 }
 
-.post{
+.post {
 
     width: 51em;
     float: right;
     margin-top: -2em;
+
+    p {
+      margin-top: 12px;
+      margin-bottom: 12px;
+    }
 
     h5{
         margin:0.4em 0 2.5em 0;
@@ -214,7 +219,7 @@ hr{
 
     section{
         font-family: georgia,times,serif;
-        line-height: 1.9em;
+        line-height: 1.6em;
         font-size: 1.15em;
         color: darken($grayLight, 10%);
 
@@ -241,13 +246,66 @@ hr{
           div.proc-3 {
             color: #6666ff;
           }
-       }
+        }
 
-       div.example-mouse {
-         @extend div.example;
-         font-size: 72px;
-         line-height: 200px;
-       }
+        div.example-select {
+          @extend div.example;
+          text-align: left;
+
+          pre {
+            position: relative;
+            left: 240px;
+            background-color: transparent;
+            border: none;
+            font-size: 15px;
+          }
+
+          ul {
+            position: relative;
+            left: 242px;
+            background: white;
+            width: 170px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            -webkit-border-radius: 4px;
+            -moz-border-radius: 4px;
+
+            li {
+              list-style: none;
+              cursor: pointer;
+              padding: 4px 4px 4px 8px;
+              border-bottom: 1px solid #ccc;
+
+              &.highlighted {
+                background-color: #ccccff;
+              }
+              &.selected {
+                background-color: #ffcccc;
+              }
+              &.highlighted.selected {
+                background-color: #ffccff;
+              }
+            }
+          }
+        }
+
+        div#array-highlight {
+          height: 125px;
+        }
+
+        div#array-highlight-select {
+          height: 155px;
+        }
+
+        div#ul-highlight-select {
+          height: 170px;
+        }
+
+        div.example-mouse {
+          @extend div.example;
+          font-size: 72px;
+          line-height: 200px;
+        }
 
        div#example-search {
          font-size: 18px;
