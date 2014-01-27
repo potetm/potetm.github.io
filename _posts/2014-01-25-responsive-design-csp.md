@@ -319,7 +319,7 @@ interesting and informative comparison.
 Before I get out of here, I'd like to thank both [Jonathan Boston](https://github.com/bostonou) and [Caleb
 Phillips](https://github.com/calebphillips) for giving me some very constructive feedback on the post before I went to press.
 
-Also, if you should watch Rob Pike's talks about [*Go Concurrency Patterns*](https://www.youtube.com/watch?v=f6kdp27TYZs) and [*Concurrency
+Also, you should watch Rob Pike's talks about [*Go Concurrency Patterns*](https://www.youtube.com/watch?v=f6kdp27TYZs) and [*Concurrency
 is Not Parallelism*](http://vimeo.com/49718712).  I've found them the most compact and informative sources on CSP in my journey so far.
 
 <style>
