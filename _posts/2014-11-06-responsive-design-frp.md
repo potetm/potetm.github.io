@@ -2,13 +2,22 @@
 layout: post_page
 title: "Responsive Reactive"
 ---
+When I [left off](/2014/01/27/responsive-design-csp.html) so long ago,
+I was discussing David Nolen's post
+[*CSP is Responsive Design*](http://swannodette.github.io/2013/07/31/extracting-processes/).
+A lot has changed since then, especially with the rise of
+[React.js](http://facebook.github.io/react/) and the
+[myriad](https://github.com/swannodette/om)
+[of](https://github.com/holmsand/reagent)
+[clojurescript](https://github.com/levand/quiescent)
+wrappers that have popped up of the past year.
+
 ```clojure
 (defn init-model [items]
   (let [model (bjb/combine-model
                 {:items       items
                  :highlighted "none"
                  :selected    "none"})]
-
     (-> model
         ->clj
         (b/filter (comp empty? :items))
@@ -16,66 +25,53 @@ title: "Responsive Reactive"
         (b/map #(assoc % :highlighted "none" :selected "none"))
         ->js
         (->> (bjb/add-source model)))
-
     model))
 ```
 ```clojure
 (defn update-model! [model events event-key update-key next-fn]
-  (-> (b/filter events (comp not nil? #{event-key}))
-      (b/map model)
+  (-> (b/filter events (comp not nil? #{event-key} first))
+      (b/map (b/combine-as-array model events))
       ->clj
-      (b/map #(assoc % update-key (next-fn %)))
+      (b/map (fn [[m e :as v]] (assoc m update-key (next-fn v))))
       ->js
       (->> (bjb/add-source model))))
 
-(defn bind-highlight-number! [model events]
-  (let [events (b/filter events #(or (number? %) (= "none" %)))]
-    (-> events
-        (b/map (b/combine-as-array model events))
-        ->clj
-        (b/map (fn [[m e]] (assoc m :highlighted e)))
-        ->js
-        (->> (bjb/add-source model)))))
-
-(defn bind-item-update! [model events]
-  (let [lens (bjb/lens model "items")]
-    (-> events
-        (b/filter vector?)
-        (b/filter #(= (first %) :append))
-        (b/map second)
-        (b/on-value
-          (fn [item]
-            (if (empty? item)
-              (bjb/set-value lens [])
-              (bjb/modify lens #(conj (vec %) item))))))))
-
 (defn init-events! [model events]
   (update-model! model events :next :highlighted
-                 (fn [{:keys [items highlighted]}]
+                 (fn [[{:keys [items highlighted]} _e]]
                    (if (= "none" highlighted)
                      0
                      (mod (inc highlighted) (count items)))))
 
   (update-model! model events :prev :highlighted
-                 (fn [{:keys [items highlighted]}]
+                 (fn [[{:keys [items highlighted]} _e]]
                    (if (= "none" highlighted)
                      (count items)
                      (mod (dec highlighted) (count items)))))
 
+  (update-model! model events :clear-highlight :highlighted
+                 (constantly "none"))
+
+  (update-model! model events :highlight :highlighted
+                 (fn [[{:keys [highlighted]} [_k index]]]
+                   (if (or (number? index) (= "none" index))
+                     index
+                     highlighted)))
+
   (update-model! model events :select :selected
-                 (fn [{:keys [highlighted]}]
+                 (fn [[{:keys [highlighted]} _e]]
                    highlighted))
 
-  (update-model! model events :clear-highlight :highlighted (constantly "none"))
-
-  (bind-highlight-number! model events)
-  (bind-item-updates! model events))
+  (update-model! model events :append :items
+                 (fn [[{:keys [items]} [_k item]]]
+                   (if (empty? item)
+                     []
+                     (conj items item)))))
 ```
 ```clojure
 (defn menu [items events render]
   (let [model (init-model items)]
     (init-events! model events)
-
     (-> model
         ->clj
         (b/skip-duplicates =)

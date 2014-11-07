@@ -32,14 +32,13 @@
       (b/do-action j/prevent)
       (b/map #(.-keyCode %))
       (b/filter (comp not nil? KEYS))
-      (b/map #(keycode->action %))))
+      (b/map (comp vector keycode->action))))
 
 (defn init-model [items]
   (let [model (bjb/combine-model
                 {:items       items
                  :highlighted "none"
                  :selected    "none"})]
-
     (-> model
         ->clj
         (b/filter (comp empty? :items))
@@ -47,64 +46,51 @@
         (b/map #(assoc % :highlighted "none" :selected "none"))
         ->js
         (->> (bjb/add-source model)))
-
     model))
 
 (defn update-model! [model events event-key update-key next-fn]
-  (-> (b/filter events (comp not nil? #{event-key}))
-      (b/map model)
+  (-> (b/filter events (comp not nil? #{event-key} first))
+      (b/map (b/combine-as-array model events))
       ->clj
-      (b/map #(assoc % update-key (next-fn %)))
+      (b/map (fn [[m e :as v]] (assoc m update-key (next-fn v))))
       ->js
       (->> (bjb/add-source model))))
 
-(defn bind-highlight-number! [model events]
-  (let [events (b/filter events #(or (number? %) (= "none" %)))]
-    (-> events
-        (b/map (b/combine-as-array model events))
-        ->clj
-        (b/map (fn [[m e]] (assoc m :highlighted e)))
-        ->js
-        (->> (bjb/add-source model)))))
-
-(defn bind-item-update! [model events]
-  (let [lens (bjb/lens model "items")]
-    (-> events
-        (b/filter vector?)
-        (b/filter #(= (first %) :append))
-        (b/map second)
-        (b/on-value
-          (fn [item]
-            (if (empty? item)
-              (bjb/set-value lens [])
-              (bjb/modify lens #(conj (vec %) item))))))))
-
 (defn init-events! [model events]
   (update-model! model events :next :highlighted
-                 (fn [{:keys [items highlighted]}]
+                 (fn [[{:keys [items highlighted]} _e]]
                    (if (= "none" highlighted)
                      0
                      (mod (inc highlighted) (count items)))))
 
   (update-model! model events :prev :highlighted
-                 (fn [{:keys [items highlighted]}]
+                 (fn [[{:keys [items highlighted]} _e]]
                    (if (= "none" highlighted)
                      (count items)
                      (mod (dec highlighted) (count items)))))
 
+  (update-model! model events :clear-highlight :highlighted
+                 (constantly "none"))
+
+  (update-model! model events :highlight :highlighted
+                 (fn [[{:keys [highlighted]} [_k index]]]
+                   (if (or (number? index) (= "none" index))
+                     index
+                     highlighted)))
+
   (update-model! model events :select :selected
-                 (fn [{:keys [highlighted]}]
+                 (fn [[{:keys [highlighted]} _e]]
                    highlighted))
 
-  (update-model! model events :clear-highlight :highlighted (constantly "none"))
-
-  (bind-highlight-number! model events)
-  (bind-item-update! model events))
+  (update-model! model events :append :items
+                 (fn [[{:keys [items]} [_k item]]]
+                   (if (empty? item)
+                     []
+                     (conj items item)))))
 
 (defn menu [items events render]
   (let [model (init-model items)]
     (init-events! model events)
-
     (-> model
         ->clj
         (b/skip-duplicates =)
@@ -134,19 +120,19 @@
 (defn leavestream [$ul]
   (-> $ul
       bjb/mouseleaveE
-      (b/map (constantly :clear-highlight))))
+      (b/map (constantly [:clear-highlight]))))
 
 (defn overstream [$ul]
   (-> $ul
       bjb/mouseoverE
       (b/map #($ (.-target %)))
       (b/filter #(j/is % "li"))
-      (b/map #(.index %))))
+      (b/map #(vector :highlight (.index %)))))
 
 (defn hover-events [$ul]
   (-> $ul
       bjb/clickE
-      (b/map (constantly :select))
+      (b/map (constantly [:select]))
       (b/merge-all (leavestream $ul) (overstream $ul) (key-events $ul))))
 
 (let [$elem ($ :ul#ul-highlight-select-list)]
