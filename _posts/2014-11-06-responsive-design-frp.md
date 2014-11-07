@@ -334,7 +334,7 @@ a lot of power to be leveraged in separating them.
 OM cursors help alleviate the problem of modeling. However, they still complect
 model updates and rendering. Even in
 [OM's Advanced Tutorial](https://github.com/swannodette/om/wiki/Advanced-Tutorial),
-you see examples of state updates in the middle of the render method. The problem
+you see examples of state updates in the middle of the render function. The problem
 with this approach is it becomes difficult to determine which component should
 be responsible for handling state updates. Is it okay that the lowest component
 updates state? What if somebody else is looking at that state? If you move it up,
