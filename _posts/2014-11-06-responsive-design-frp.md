@@ -323,7 +323,7 @@ A lot has changed since I wrote the first part of this post, especially with the
 wrappers that have popped up for it over the past year.
 
 Nobody, including myself, is advocating that we go back to the days of selectors and
-explicit DOM manipulation. However, the underlying principles of this architecture is
+explicit DOM manipulation. However, the underlying principles of this architecture are
 still valid. The real power of React.js is that it takes care of rendering your data.
 We now have the power to say, "Here's my data. Draw it. And do it fast."
 
