@@ -1,5 +1,7 @@
 .bundle
 css/.sass-cache
+css/style.css.map
+.sass-cache
 _site
 *.iml
 *.swp

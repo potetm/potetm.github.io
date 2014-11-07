@@ -322,15 +322,6 @@ Phillips](https://github.com/calebphillips) for giving me some very constructive
 Also, you should watch Rob Pike's talks about [*Go Concurrency Patterns*](https://www.youtube.com/watch?v=f6kdp27TYZs) and [*Concurrency
 is Not Parallelism*](http://vimeo.com/49718712).  I've found them the most compact and informative sources on CSP in my journey so far.
 
-<style>
-  ol {
-    position: relative;
-    left: 200px;
-    margin-top: 20px;
-    margin-bottom: 20px;
-  }
-</style>
-
 <script type="text/javascript" src="/js/jquery.min.js"></script>
 <script type="text/javascript" src="/js/bacon.js"></script>
 <script type="text/javascript" src="/js/bacon-model.js"></script>

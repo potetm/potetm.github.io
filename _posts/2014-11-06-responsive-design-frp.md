@@ -5,12 +5,35 @@ title: "Responsive Reactive"
 When I [left off](/2014/01/27/responsive-design-csp.html) so long ago,
 I was discussing David Nolen's post
 [*CSP is Responsive Design*](http://swannodette.github.io/2013/07/31/extracting-processes/).
-A lot has changed since then, especially with the rise of
-[React.js](http://facebook.github.io/react/) and the
-[myriad](https://github.com/swannodette/om)
-[of](https://github.com/holmsand/reagent)
-[clojurescript](https://github.com/levand/quiescent)
-wrappers that have popped up of the past year.
+In it, Nolen suggests the following concerns as a replacement to the standard MVC:
+
+  1. Event Stream Processing
+  2. Event Stream Coordination
+  3. Interface Representation
+
+While these are reasonable concerns, they are not at all fundamental
+to responsive applications. Much more fundamental in my mind are:
+
+  1. Data Modeling
+  2. Data Updates (Stream Processing and Coordination)
+  3. Data Rendering
+
+I happen to agree that an event stream is one of the best abstractions
+we have for making stable updates to a model, but we should be clear about their place.
+Event streams and interfaces are both ancillary concerns. They are a means to an end.
+The end is always data.
+
+Let's take last post's example of a submenu to see how this looks in FRP:
+
+---
+
+#### Data Modeling
+
+We'll model our submenu as a map of
+
+  * `:items`: The list of items to display
+  * `:highlighted`: The currently highlighted item index
+  * `:selected`: The currently selected item index
 
 ```clojure
 (defn init-model [items]
@@ -27,6 +50,17 @@ wrappers that have popped up of the past year.
         (->> (bjb/add-source model)))
     model))
 ```
+
+We also use the initializer to set up a rule that resets `:highlighted` and `:selected`
+whenever the `:items` are empty.
+
+---
+
+#### Data Updates
+
+First, we define a function that can be used to dispatch events to functions
+that will update specific attributes of our model:
+
 ```clojure
 (defn update-model! [model events event-key update-key next-fn]
   (-> (b/filter events (comp not nil? #{event-key} first))
@@ -35,6 +69,13 @@ wrappers that have popped up of the past year.
       (b/map (fn [[m e :as v]] (assoc m update-key (next-fn v))))
       ->js
       (->> (bjb/add-source model))))
+```
+
+Events will come in as tuples of `[event-type event-data]`.
+
+We then set up our update handlers:
+
+```clojure
 
 (defn init-events! [model events]
   (update-model! model events :next :highlighted
@@ -68,6 +109,14 @@ wrappers that have popped up of the past year.
                      []
                      (conj items item)))))
 ```
+
+---
+
+#### Data Rendering
+
+We can now create a menu constructor that takes an initial item list,
+a stream of events to respond to, and a render function:
+
 ```clojure
 (defn menu [items events render]
   (let [model (init-model items)]
@@ -80,6 +129,9 @@ wrappers that have popped up of the past year.
             (render items highlighted selected))))
     model))
 ```
+
+And now the fruits of our labor:
+
 ```clojure
 (let [$div ($ :div#array-highlight)
       $pre ($ :pre#array-highlight-list $div)]
@@ -103,7 +155,31 @@ wrappers that have popped up of the past year.
   <pre id="array-highlight-list">
   </pre>
 </div>
+
+Notice how we've completely decoupled underlying data, event processing,
+and rendering from the top to the bottom. Due to our architecture, we are
+able to slip in a completely different rendering function along with mouse
+events with ease:
+
 ```clojure
+(defn leavestream [$ul]
+  (-> $ul
+      bjb/mouseleaveE
+      (b/map (constantly [:clear-highlight]))))
+
+(defn overstream [$ul]
+  (-> $ul
+      bjb/mouseoverE
+      (b/map #($ (.-target %)))
+      (b/filter #(j/is % "li"))
+      (b/map #(vector :highlight (.index %)))))
+
+(defn hover-events [$ul]
+  (-> $ul
+      bjb/clickE
+      (b/map (constantly [:select]))
+      (b/merge-all (leavestream $ul) (overstream $ul) (key-events $ul))))
+
 (let [$elem ($ :ul#ul-highlight-select-list)]
   (menu
     ["So"
@@ -121,6 +197,18 @@ wrappers that have popped up of the past year.
    <ul id="ul-highlight-select-list">
    </ul>
 </div>
+
+---
+
+#### Incremental Drawing
+
+So far, we've just completely redrawn our element on every change. While that's
+the most straightforward solution, it's not at all scalable. So let's change it
+to do incremental updates to the DOM.
+
+First we change our constructor to return a series of streams that contain
+the individual changes to our model.
+
 ```clojure
 (defn menu-incremental [items events]
   (let [model (init-model items)
@@ -135,6 +223,9 @@ wrappers that have popped up of the past year.
      :select      (b/map select second)
      :unselect    (b/map select first)}))
 ```
+
+Then we can simply bind simple DOM updates to those streams.
+
 ```clojure
 (defn bind-li-changes! [$elem stream update-fn]
   (-> stream
@@ -168,6 +259,10 @@ wrappers that have popped up of the past year.
    <ul id="incremental-list">
    </ul>
 </div>
+
+This also allows us to watch for changes to `:items` and add to the list
+dynamically.
+
 ```clojure
 (defn item-events [& items]
   (-> (b/repeatedly 1000 (clj->js items))
@@ -197,6 +292,34 @@ wrappers that have popped up of the past year.
    <ul id="incremental-changes-list">
    </ul>
 </div>
+
+It's important to note that we were able to make these pretty major changes to the way
+our element is drawn without touching the underlying data model or the underlying event
+system. All we had to do was get another view of our data using lenses and sliding windows.
+Everything else was DOM work.
+
+# TODO: CLOSE ER OUT
+
+***DON'T FORGET TO LINK TO THIS IN THE PREVIOUS ARTICLE***
+
+A lot has changed since then, especially with the rise of
+[React.js](http://facebook.github.io/react/) and the
+[myriad](https://github.com/swannodette/om)
+[of](https://github.com/holmsand/reagent)
+[clojurescript](https://github.com/levand/quiescent)
+wrappers that have popped up for it over the past year.
+
+Unfortunately, those concerns could easily be mapped to Model, View, and Controller.
+Indeed, the (deeply) underlying principles of MVC are sound. It's in the execution
+that every MVC library I've ever seen goes astray. MVC apps tend to devolve into
+messes of two-way binding, data hiding, and unstable mutation.
+
+---
+
+I could certainly see an argument for making an interface so you don't
+force users to individually bind changes. However, for us that is a completely
+trivial decision compared to the overall architecture.
+
 <script type="text/javascript" src="/js/jquery.min.js"></script>
 <script type="text/javascript" src="/js/bacon.js"></script>
 <script type="text/javascript" src="/js/bacon-model.js"></script>

@@ -223,6 +223,13 @@ hr{
         font-size: 1.15em;
         color: darken($grayLight, 10%);
 
+        ol {
+          position: relative;
+          left: 200px;
+          margin-top: 20px;
+          margin-bottom: 20px;
+        }
+
         div.example {
           font: 13.34px 'Inconsolata',arial,clean,sans-serif;
           color: #666;
