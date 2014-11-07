@@ -23,7 +23,14 @@ we have for making stable updates to a model, but we should be clear about their
 Event streams and interfaces are both ancillary concerns. They are a means to an end.
 The end is always data.
 
-Let's take last post's example of a submenu to see how this looks in FRP:
+Unfortunately, those concerns could easily be mapped to Model, View, and Controller.
+Indeed, the (deeply) underlying principles of MVC are sound. It's in the execution
+that every MVC library I've ever seen goes astray. MVC apps tend to devolve into
+messes of two-way binding, data hiding, and unstable mutation. So an important
+zeroth concern, the thing the predicates everything else, is that we should always
+deal with [*stable*](http://clojure.org/state#toc3) data.
+
+Let's take last post's example of a submenu to see how this looks in Bacon.js.
 
 ---
 
@@ -59,7 +66,7 @@ whenever the `:items` are empty.
 #### Data Updates
 
 First, we define a function that can be used to dispatch events to functions
-that will update specific attributes of our model:
+that will update specific attributes of our model.
 
 ```clojure
 (defn update-model! [model events event-key update-key next-fn]
@@ -73,7 +80,7 @@ that will update specific attributes of our model:
 
 Events will come in as tuples of `[event-type event-data]`.
 
-We then set up our update handlers:
+We then set up our update handlers.
 
 ```clojure
 
@@ -115,7 +122,7 @@ We then set up our update handlers:
 #### Data Rendering
 
 We can now create a menu constructor that takes an initial item list,
-a stream of events to respond to, and a render function:
+a stream of events to respond to, and a render function.
 
 ```clojure
 (defn menu [items events render]
@@ -159,7 +166,7 @@ And now the fruits of our labor:
 Notice how we've completely decoupled underlying data, event processing,
 and rendering from the top to the bottom. Due to our architecture, we are
 able to slip in a completely different rendering function along with mouse
-events with ease:
+events with ease.
 
 ```clojure
 (defn leavestream [$ul]
@@ -203,7 +210,7 @@ events with ease:
 #### Incremental Drawing
 
 So far, we've just completely redrawn our element on every change. While that's
-the most straightforward solution, it's not at all scalable. So let's change it
+the most straightforward solution, many times it is too slow. So let's change it
 to do incremental updates to the DOM.
 
 First we change our constructor to return a series of streams that contain
@@ -223,6 +230,10 @@ the individual changes to our model.
      :select      (b/map select second)
      :unselect    (b/map select first)}))
 ```
+
+Notice that we're not changing the underlying model. We're simply changing
+how we look at that model. Due to the fact that we have a stream of stable values,
+we can easily view the history of an item with `b/sliding-window`.
 
 Then we can simply bind simple DOM updates to those streams.
 
@@ -293,32 +304,49 @@ dynamically.
    </ul>
 </div>
 
-It's important to note that we were able to make these pretty major changes to the way
+I just want to reiterate that we were able to make these major changes to the way
 our element is drawn without touching the underlying data model or the underlying event
 system. All we had to do was get another view of our data using lenses and sliding windows.
 Everything else was DOM work.
 
-# TODO: CLOSE ER OUT
-
-***DON'T FORGET TO LINK TO THIS IN THE PREVIOUS ARTICLE***
-
-A lot has changed since then, especially with the rise of
-[React.js](http://facebook.github.io/react/) and the
-[myriad](https://github.com/swannodette/om)
-[of](https://github.com/holmsand/reagent)
-[clojurescript](https://github.com/levand/quiescent)
-wrappers that have popped up for it over the past year.
-
-Unfortunately, those concerns could easily be mapped to Model, View, and Controller.
-Indeed, the (deeply) underlying principles of MVC are sound. It's in the execution
-that every MVC library I've ever seen goes astray. MVC apps tend to devolve into
-messes of two-way binding, data hiding, and unstable mutation.
+I could certainly see an argument for making an interface so you don't
+force users to individually bind changes. However, for us that is a completely
+trivial API decision compared to the overall architecture.
 
 ---
 
-I could certainly see an argument for making an interface so you don't
-force users to individually bind changes. However, for us that is a completely
-trivial decision compared to the overall architecture.
+### Why does this even matter?
+
+A lot has changed since I wrote the first part of this post, especially with the rise of
+[React.js](http://facebook.github.io/react/) and the [myriad](https://github.com/swannodette/om)
+[of](https://github.com/holmsand/reagent) [clojurescript](https://github.com/levand/quiescent)
+wrappers that have popped up for it over the past year.
+
+Nobody, including myself, is advocating that we go back to the days of selectors and
+explicit DOM manipulation. However, the underlying principles of this architecture is
+still valid. The real power of React.js is that it takes care of rendering your data.
+We now have the power to say, "Here's my data. Draw it. And do it fast."
+
+React has a lot to say about state management as well, but their system complects
+modeling, updates, and rendering. Those are each separate concerns, and there is
+a lot of power to be leveraged in separating them.
+
+OM cursors help alleviate the problem of modeling. However, they still complect
+model updates and rendering. Even in
+[OM's Advanced Tutorial](https://github.com/swannodette/om/wiki/Advanced-Tutorial),
+you see examples of state updates in the middle of the render method. The problem
+with this approach is it becomes difficult to determine which component should
+be responsible for handling state updates. Is it okay that the lowest component
+updates state? What if somebody else is looking at that state? If you move it up,
+will you be able to find it in the future?
+
+Even in [Nolen's example from June 2013](https://github.com/swannodette/swannodette.github.com/blob/master/code/blog/src/blog/responsive/core.cljs#L207-L214),
+he was advocating for braiding rendering and updating.
+
+As we saw in this example, it is possible to completely separate the concerns of
+data rendering and data updating. None of our rendering code was dependant on
+how and when we choose to update our model. We should aspire for the same
+clean separation using today's tools.
 
 <script type="text/javascript" src="/js/jquery.min.js"></script>
 <script type="text/javascript" src="/js/bacon.js"></script>
