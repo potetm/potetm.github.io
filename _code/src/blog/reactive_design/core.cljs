@@ -10,11 +10,8 @@
 
 (enable-console-print!)
 
-(fluxme/init-fluxme!
-  (d/create-conn domain/schema)
-  (chan 1024))
+(fluxme/init-conn! (d/create-conn domain/schema))
 (d/transact conn domain/initial-state)
-(subs/init-subscribers)
 
 (def todo-list
   (component
@@ -49,20 +46,6 @@
           {:on-click (fn [_]
                        (fluxme/publish!
                          (fluxme/event :todo/add-item @conn {})))}
-          (str "Add #" (inc item-count))]])
-      fluxme/ISubscribe
-      (subscribers [_]
-        [(add-subscriber update-input-val 5 [:todo/input-val]
-           (go-loop []
-             (when-some [{:keys [subjects]} (<! update-input-val)]
-               (d/transact! conn (domain/get-update-input-facts (:value subjects)))
-               (recur))))
-         (add-subscriber add-item 5 [:todo/add-item]
-           (go-loop []
-             (when-some [{:keys [db]} (<! add-item)]
-               (d/transact! conn
-                            (concat (domain/get-add-item-facts db)
-                                    (domain/reset-input-facts)))
-               (recur))))]))))
+          (str "Add #" (inc item-count))]]))))
 
 (fluxme/mount-app (todo-app) (js/document.getElementById "test-01"))

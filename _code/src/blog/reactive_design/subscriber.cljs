@@ -7,4 +7,16 @@
              :refer [conn]
              :refer-macros [add-subscriber]]))
 
-(defn init-subscribers [])
+(add-subscriber update-input-val 5 [:todo/input-val]
+  (go-loop []
+    (when-some [{:keys [subjects]} (<! update-input-val)]
+      (d/transact! conn (domain/get-update-input-facts (:value subjects)))
+      (recur))))
+
+(add-subscriber add-item 5 [:todo/add-item]
+  (go-loop []
+    (when-some [{:keys [db]} (<! add-item)]
+      (d/transact! conn
+                   (concat (domain/get-add-item-facts db)
+                           (domain/reset-input-facts)))
+      (recur))))
