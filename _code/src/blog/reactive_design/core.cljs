@@ -23,6 +23,15 @@
         [:ul
          (map (partial vector :li) items)]))))
 
+(def todo-user
+  (component
+    (reify
+      fluxme/IFlux
+      (query [_ db]
+        (domain/get-username db))
+      (render [_ name]
+        [:div name]))))
+
 (def todo-app
   (component
     (reify
@@ -35,8 +44,10 @@
              :item-count (count items)})))
       (render [_this {:keys [input-val item-count]}]
         [:div
+         [:h3 (todo-user)]
          [:h3 "TODO"]
-         (todo-list)
+         [:div (todo-list)]
+         [:div.other-list (todo-list)]
          [:form {:on-submit (fn [e]
                               (.preventDefault e)
                               (fluxme/publish!

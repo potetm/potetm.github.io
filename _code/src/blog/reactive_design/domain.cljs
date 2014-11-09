@@ -6,7 +6,17 @@
                 :db/valueType   :db.type/ref}})
 
 (def initial-state
-  [[:db/add 1 :todo/input ""]])
+  [[:db/add 1 :todo/input ""]
+   [:db/add 2 :user/username "tpote"]])
+
+(defn get-username [db]
+  (ffirst
+    (d/q
+      '[:find ?v
+        :where
+        [?u :user/username ?v]]
+      db
+      2)))
 
 (defn get-todo-items [db]
   (map
