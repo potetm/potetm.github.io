@@ -2,7 +2,8 @@
   (:require [datascript :as d]))
 
 (def schema
-  {:todo/items {:db/cardinality :db.cardinality/many}})
+  {:todo/items {:db/cardinality :db.cardinality/many
+                :db/valueType   :db.type/ref}})
 
 (def initial-state
   [[:db/add 1 :todo/input ""]])
@@ -13,10 +14,11 @@
     (sort-by
       second
       (d/q
-        '[:find ?i ?tx
+        '[:find ?n ?tx
           :in $ ?t
           :where
-          [?t :todo/items ?i ?tx]]
+          [?t :todo/items ?i]
+          [?i :item/name ?n ?tx]]
         db
         1))))
 
@@ -37,4 +39,5 @@
   [[:db/add 1 :todo/input ""]])
 
 (defn get-add-item-facts [db]
-  [[:db/add 1 :todo/items (get-input-val db)]])
+  [[:db/add 1 :todo/items -1]
+   [:db/add -1 :item/name (get-input-val db)]])

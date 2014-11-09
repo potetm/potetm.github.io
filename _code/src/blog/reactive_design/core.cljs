@@ -37,15 +37,16 @@
         [:div
          [:h3 "TODO"]
          (todo-list)
-         [:input
-          {:value     input-val
-           :on-change (fn [e]
-                        (fluxme/publish!
-                          (fluxme/event :todo/input-val @conn {:value (-> e .-target .-value)})))}]
-         [:button
-          {:on-click (fn [_]
-                       (fluxme/publish!
-                         (fluxme/event :todo/add-item @conn {})))}
-          (str "Add #" (inc item-count))]]))))
+         [:form {:on-submit
+                 (fn [e]
+                   (.preventDefault e)
+                   (fluxme/publish!
+                     (fluxme/event :todo/add-item @conn {})))}
+          [:input
+           {:value     input-val
+            :on-change (fn [e]
+                         (fluxme/publish!
+                           (fluxme/event :todo/input-val @conn {:value (-> e .-target .-value)})))}]
+          [:button (str "Add #" (inc item-count))]]]))))
 
 (fluxme/mount-app (todo-app) (js/document.getElementById "test-01"))
