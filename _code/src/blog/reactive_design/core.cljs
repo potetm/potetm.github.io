@@ -37,11 +37,10 @@
         [:div
          [:h3 "TODO"]
          (todo-list)
-         [:form {:on-submit
-                 (fn [e]
-                   (.preventDefault e)
-                   (fluxme/publish!
-                     (fluxme/event :todo/add-item @conn {})))}
+         [:form {:on-submit (fn [e]
+                              (.preventDefault e)
+                              (fluxme/publish!
+                                (fluxme/event :todo/add-item @conn {})))}
           [:input
            {:value     input-val
             :on-change (fn [e]
