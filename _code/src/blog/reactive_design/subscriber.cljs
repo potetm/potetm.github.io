@@ -3,7 +3,7 @@
   (:require [blog.reactive-design.domain :as domain]
             [cljs.core.async :refer [<! chan] :as a]
             [datascript :as d]
-            [fluxme.core :as fluxme
+            [phi.core :as phi
              :refer [conn]
              :refer-macros [add-subscriber]]))
 

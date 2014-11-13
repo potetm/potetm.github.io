@@ -7,7 +7,7 @@
   :dependencies [[com.facebook/react "0.11.2"]
                  [cljs-uuid "0.0.4"]
                  [datascript "0.5.1"]
-                 [fluxme "0.1.0-SNAPSHOT"]
+                 [phi "0.1.0-SNAPSHOT"]
                  [jayq "2.5.2"]
                  [org.clojure/clojure "1.7.0-alpha3"]
                  [org.clojure/clojurescript "0.0-2371"]

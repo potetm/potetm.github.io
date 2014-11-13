@@ -4,19 +4,19 @@
             [blog.reactive-design.subscriber :as subs]
             [cljs.core.async :refer [<! chan] :as a]
             [datascript :as d]
-            [fluxme.core :as fluxme
+            [phi.core :as phi
              :refer [conn component]
              :refer-macros [add-subscriber]]))
 
 (enable-console-print!)
 
-(fluxme/init-conn! (d/create-conn domain/schema))
+(phi/init-datascript-conn! (d/create-conn domain/schema))
 (d/transact conn domain/initial-state)
 
 (def todo-list
   (component
     (reify
-      fluxme/IFlux
+      phi/IPhi
       (query [_ db]
         (domain/get-todo-items db))
       (render [_ items]
@@ -26,7 +26,7 @@
 (def todo-user
   (component
     (reify
-      fluxme/IFlux
+      phi/IPhi
       (query [_ db]
         (domain/get-username db))
       (render [_ name]
@@ -35,7 +35,7 @@
 (def todo-app
   (component
     (reify
-      fluxme/IFlux
+      phi/IPhi
       (query [_this db]
         (let [input (domain/get-input-val db)
               items (domain/get-todo-items db)]
@@ -50,13 +50,13 @@
          [:div.other-list (todo-list)]
          [:form {:on-submit (fn [e]
                               (.preventDefault e)
-                              (fluxme/publish!
-                                (fluxme/event :todo/add-item @conn {})))}
+                              (phi/publish!
+                                (phi/event :todo/add-item @conn {})))}
           [:input
            {:value     input-val
             :on-change (fn [e]
-                         (fluxme/publish!
-                           (fluxme/event :todo/input-val @conn {:value (-> e .-target .-value)})))}]
+                         (phi/publish!
+                           (phi/event :todo/input-val @conn {:value (-> e .-target .-value)})))}]
           [:button (str "Add #" (inc item-count))]]]))))
 
-(fluxme/mount-app (todo-app) (js/document.getElementById "test-01"))
+(phi/mount-app (todo-app) (js/document.getElementById "test-01"))
