@@ -16,7 +16,7 @@ near the power and flexibility of a true REPL. Additionally, I don't find
 So, like many, I tried to learn clojure and Emacs at the same time.
 
 I found that experience to be extremely frustrating. Not only was I having to learn and apply new language
-concepts, but I constantly felt hampered by my inability to edit text efficiently. Not to mention, getting
+concepts, but I constantly felt hampered by my inability to edit text efficiently. Not to mention getting
 set up with *any* of the aforementioned tools is non-trivial for a newcomer. To this day, I remember the difficulty
 trying to "just fire up and connect to nREPL".
 
