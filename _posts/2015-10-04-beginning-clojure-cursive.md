@@ -90,6 +90,16 @@ Now that you have Cursive all set up, you can
 [import the project you just created](https://cursiveclojure.com/userguide/leiningen.html) and
 [set up a REPL](https://cursiveclojure.com/userguide/leiningen.html) in your project.
 
+**NOTE**: During the project import process, you will be prompted to choose an SDK.
+
+  1. Click the + button to create a new SDK
+  2. Select *JDK* from the *Add New SDK* drop down
+  3. Navigate to the Java install location you noted during step 1.
+
+You can later access and modify the SDKs you have installed by going to *File → Project Structure → SDKs*.
+You can change the SDK for a particular project by going to *File → Project Structure → Project* and
+selecting a new *Project SDK*.
+
 #### (Optional) Install IdeaVim
 Lastly, we'll mix in all the goodness of vim with the [IdeaVim plugin](https://github.com/JetBrains/ideavim).
 Go to *Settings → Plugins → Install JetBrains plugin → IdeaVim*. Click *Install Plugin* and restart.
