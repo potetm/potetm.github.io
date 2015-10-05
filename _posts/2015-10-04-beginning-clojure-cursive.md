@@ -88,7 +88,7 @@ your preferred keymap.
 
 Now that you have Cursive all set up, you can
 [import the project you just created](https://cursiveclojure.com/userguide/leiningen.html) and
-[set up a REPL](https://cursiveclojure.com/userguide/leiningen.html) in your project.
+[set up a REPL](https://cursiveclojure.com/userguide/repl.html) in your project.
 
 **NOTE**: During the project import process, you will be prompted to choose an SDK.
 
